@@ -97,8 +97,29 @@ public class Field {
 
     public void gamePreLayout(String type) {
         if (type.equals(ICELANDIC)) {
-
+            for (int y = 0; y < this.allBoxes.length; y++) {
+                this.allBoxes[y][0].addLeftLine();
+            }
+            for (int x = 0; x < this.allBoxes[this.allBoxes.length - 1].length; x++) {
+                this.allBoxes[this.allBoxes.length - 1][x].addDownLine();
+            }
         }
+
+        if (type.equals(SWEDISH)) {
+            for (int y = 0; y < this.allBoxes.length; y++) {
+                this.allBoxes[y][0].addLeftLine();
+            }
+            for (int x = 0; x < this.allBoxes[this.allBoxes.length - 1].length; x++) {
+                this.allBoxes[this.allBoxes.length - 1][x].addDownLine();
+            }
+            for (int y = 0; y < this.allBoxes.length; y++) {
+                this.allBoxes[y][this.allBoxes[y].length - 1].addRightLine();
+            }
+            for (int x = 0; x < this.allBoxes[this.allBoxes.length - 1].length; x++) {
+                this.allBoxes[0][x].addUpLine();
+            }
+        }
+
     }
 
     public void addLine(int x, int y, Side side) {
