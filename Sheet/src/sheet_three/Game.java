@@ -6,5 +6,6 @@ public class Game {
         Field field = new Field(4, GameType.AMERICAN);
         field.fillCharBlank();
         field.printField();
+
     }
 }
