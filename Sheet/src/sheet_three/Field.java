@@ -1,22 +1,27 @@
 package sheet_three;
 
-enum GameType {
-    AMERICAN,
-    ICELANDIC,
-    SWEDISH;
+enum Side {
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT
 }
 
 public class Field {
-    GameType gameType;
-    private char[][] field;
-    private Box[][] allBoxes;
 
     private static final char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
     private static final char WHITESPACE = ' ';
     private static final char PLUS = '+';
+    private static final char HORIZONTAL = '-';
+    private static final char VERTICAL = '|';
+    private static final String AMERICAN = "american";
+    private static final String ICELANDIC = "icelandic";
+    private static final String SWEDISH = "swedish";
 
-    public Field(int n, GameType type) {
-        this.gameType = type;
+    private char[][] field;
+    private Box[][] allBoxes;
+
+    public Field(int n, String gameType) {
         this.field = new char[2 * n + 2][4 * n + 2];
         this.allBoxes = new Box[n][n];
         for (int a = 0; a < this.allBoxes.length; a++) {
@@ -24,11 +29,13 @@ public class Field {
                 this.allBoxes[a][b] = new Box();
             }
         }
+        this.gamePreLayout(gameType.toLowerCase());
+
     }
 
     public void fillCharBlank() {
-        for(int y = 0; y < this.field.length; y++) {
-            for( int x = 0; x< this.field[y].length; x++) {
+        for (int y = 0; y < this.field.length; y++) {
+            for (int x = 0; x < this.field[y].length; x++) {
                 this.field[y][x] = WHITESPACE;
             }
         }
@@ -51,7 +58,7 @@ public class Field {
         }
 
         for (int y = 1; y < this.field.length; y++) {
-            for (int x = 1; x< this.field[y].length; x++) {
+            for (int x = 1; x < this.field[y].length; x++) {
                 if (((x % 4) == 1) && (y % 2) == 1) {
                     this.field[y][x] = PLUS;
                 }
@@ -61,13 +68,51 @@ public class Field {
     }
 
     public void printField() {
-        for(int y = 0; y < this.field.length; y++) {
-            for( int x = 0; x< this.field[y].length; x++) {
+        for (int y = 0; y < this.allBoxes.length; y++) {
+            for (int x = 0; x < this.allBoxes[y].length; x++) {
+                int posY = 2 + (2 * y);
+                int posX = 3 + (4 * x);
+                if (this.allBoxes[y][x].getUpLine()) {
+                    this.field[posY - 1][posX] = HORIZONTAL;
+                }
+                if (this.allBoxes[y][x].getDownLine()) {
+                    this.field[posY + 1][posX] = HORIZONTAL;
+                }
+                if (this.allBoxes[y][x].getLeftLine()) {
+                    this.field[posY][posX - 2] = VERTICAL;
+                }
+                if (this.allBoxes[y][x].getRightLine()) {
+                    this.field[posY][posX + 2] = VERTICAL;
+                }
+            }
+        }
+
+        for (int y = 0; y < this.field.length; y++) {
+            for (int x = 0; x < this.field[y].length; x++) {
                 System.out.print(this.field[y][x]);
             }
             System.out.println();
         }
     }
 
+    public void gamePreLayout(String type) {
+        if (type.equals(ICELANDIC)) {
 
+        }
+    }
+
+    public void addLine(int x, int y, Side side) {
+        if (side == Side.TOP) {
+            allBoxes[y][x].addUpLine();
+        }
+        if (side == Side.BOTTOM) {
+            allBoxes[y][x].addDownLine();
+        }
+        if (side == Side.LEFT) {
+            allBoxes[y][x].addLeftLine();
+        }
+        if (side == Side.RIGHT) {
+            allBoxes[y][x].addRightLine();
+        }
+    }
 }

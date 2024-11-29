@@ -38,6 +38,22 @@ public class Box {
         this.rightLine = true;
     }
 
+    public boolean getUpLine() {
+        return this.upLine;
+    }
+
+    public boolean getDownLine() {
+        return this.downLine;
+    }
+
+    public boolean getLeftLine() {
+        return this.leftLine;
+    }
+
+    public boolean getRightLine() {
+        return this.rightLine;
+    }
+
     public void checkIfPlayerGetsField(int i) {
         if ((i % 2 == 0) && this.upLine && this.downLine && this.leftLine && this.rightLine) {
             this.filledByPlayer = FilledByPlayer.PLAYER1;

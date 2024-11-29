@@ -1,11 +1,15 @@
 package sheet_three;
 
+import java.util.Scanner;
+
 public class Game {
 
     public static void main(String[] args) {
-        Field field = new Field(4, GameType.AMERICAN);
+        Scanner scanner = new Scanner(System.in);
+        Field field = new Field(4, "American");
         field.fillCharBlank();
         field.printField();
+
 
     }
 }
