@@ -23,19 +23,16 @@ public final class DotsAndBoxes {
             if (Integer.parseInt(args[0]) < 1 || Integer.parseInt(args[0]) > 9) {
                 System.out.println("Wrong input! Field lenght must be between 2 and 9:");
                 args[0] = scanner.nextLine();
-            }
-            else {
+            } else {
                 break;
             }
         }
         while (true) {
             if (args[1].toLowerCase().equals(AMERICAN) || args[1].toLowerCase().equals(SWEDISH)) {
                 break;
-            }
-            else if (args[1].toLowerCase().equals(ICELANDIC)) {
+            } else if (args[1].toLowerCase().equals(ICELANDIC)) {
                 break;
-            }
-            else {
+            } else {
                 System.out.println("Wrong input! PreLayout must be American, Icelandic or Swedish");
                 args[1] = scanner.nextLine();
             }
@@ -44,30 +41,27 @@ public final class DotsAndBoxes {
         field.fillCharBlank();
         field.printField();
 
-        int sumBoxA = 0;
-        int sumBoxB = 0;
+        int[] sumBox = new int[2];
         int i = 0;
-
-        int boxX = 0;
-        int boxY = 0;
-        String boxSide = "";
 
         while (i >= 0) {
             if ((i % 2) == 0) {
                 System.out.println("Player A:");
-            }
-            else {
+            } else {
                 System.out.println("Player B:");
             }
 
             String input = scanner.nextLine();
+            int boxX = 0;
+            int boxY = 0;
+            String boxSide = "";
+
             while (true) {
                 input = input.trim();
                 while (true) {
                     if (input.length() > 4) {
                         break;
-                    }
-                    else {
+                    } else {
                         System.out.println("Wrong input! Enter Again.");
                         input = scanner.nextLine();
                     }
@@ -89,25 +83,56 @@ public final class DotsAndBoxes {
                 }
                 input = input.substring(3);
                 input = input.trim();
-                if (input.toLowerCase().equals(UP) || input.toLowerCase().equals(DOWN)) {
-                    success++;
-                    boxSide = input.toLowerCase();
+
+
+                switch (input.toLowerCase()) {
+                    case UP:
+                        if (!field.getAllBoxes()[boxY][boxX].getUpLine()) {
+                            success++;
+                            boxSide = input.toLowerCase();
+                        }
+                        break;
+                    case DOWN:
+                        if (!field.getAllBoxes()[boxY][boxX].getDownLine()) {
+                            success++;
+                            boxSide = input.toLowerCase();
+                        }
+                        break;
+                    case LEFT:
+                        if (!field.getAllBoxes()[boxY][boxX].getLeftLine()) {
+                            success++;
+                            boxSide = input.toLowerCase();
+                        }
+                        break;
+                    case RIGHT:
+                        if (!field.getAllBoxes()[boxY][boxX].getRightLine()) {
+                            success++;
+                            boxSide = input.toLowerCase();
+                        }
+                        break;
                 }
-                if (input.toLowerCase().equals(LEFT) || input.toLowerCase().equals(RIGHT)) {
-                    success++;
-                    boxSide = input.toLowerCase();
-                }
+
 
                 if (success == 3) {
                     break;
                 }
+                else if ( success == 2) {
+                    System.out.println("Your entered line is already used! Enter Again.");
+                    input = scanner.nextLine();
+                }
                 else {
-                    System.out.println("Wrong input! Enter Again");
+                    System.out.println("Wrong input! Enter Again.");
                     input = scanner.nextLine();
                 }
 
             }
 
+            field.addLine(boxX, boxY, input.toLowerCase());
+            if (field.getAllBoxes()[boxY][boxX].checkIfPlayerGetsField(i)) {
+                sumBox[i % 2]++;
+                i = i - 1;
+            }
+            field.printField();
 
             i++;
         }

@@ -54,12 +54,19 @@ public class Box {
         return this.rightLine;
     }
 
-    public void checkIfPlayerGetsField(int i) {
+    public FilledByPlayer getFilledByPlayer() {
+        return this.filledByPlayer;
+    }
+
+    public boolean checkIfPlayerGetsField(int i) {
         if ((i % 2 == 0) && this.upLine && this.downLine && this.leftLine && this.rightLine) {
             this.filledByPlayer = FilledByPlayer.PLAYER1;
+            return true;
         }
         if ((i % 2 == 1) && this.upLine && this.downLine && this.leftLine && this.rightLine) {
             this.filledByPlayer = FilledByPlayer.PLAYER2;
+            return true;
         }
+        return false;
     }
 }

@@ -1,12 +1,5 @@
 package sheet_three;
 
-enum Side {
-    TOP,
-    BOTTOM,
-    LEFT,
-    RIGHT
-}
-
 public class Field {
 
     private static final char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
@@ -17,6 +10,12 @@ public class Field {
     private static final String AMERICAN = "american";
     private static final String ICELANDIC = "icelandic";
     private static final String SWEDISH = "swedish";
+    private static final String LEFT = "left";
+    private static final String RIGHT = "right";
+    private static final String UP = "up";
+    private static final String DOWN = "down";
+    private static final char PLAYERA = 'A';
+    private static final char PLAYERB = 'B';
 
     private char[][] field;
     private Box[][] allBoxes;
@@ -31,6 +30,10 @@ public class Field {
         }
         this.gamePreLayout(gameType.toLowerCase());
 
+    }
+
+    public Box[][] getAllBoxes() {
+        return this.allBoxes;
     }
 
     public void fillCharBlank() {
@@ -84,6 +87,15 @@ public class Field {
                 if (this.allBoxes[y][x].getRightLine()) {
                     this.field[posY][posX + 2] = VERTICAL;
                 }
+
+                switch (this.allBoxes[y][x].getFilledByPlayer()) {
+                    case PLAYER1:
+                        this.field[posY][posX] = PLAYERA;
+                        break;
+                    case PLAYER2:
+                        this.field[posY][posX] = PLAYERB;
+                        break;
+                }
             }
         }
 
@@ -122,18 +134,20 @@ public class Field {
 
     }
 
-    public void addLine(int x, int y, Side side) {
-        if (side == Side.TOP) {
-            allBoxes[y][x].addUpLine();
-        }
-        if (side == Side.BOTTOM) {
-            allBoxes[y][x].addDownLine();
-        }
-        if (side == Side.LEFT) {
-            allBoxes[y][x].addLeftLine();
-        }
-        if (side == Side.RIGHT) {
-            allBoxes[y][x].addRightLine();
+    public void addLine(int x, int y, String side) {
+        switch (side) {
+            case UP:
+                this.allBoxes[y][x].addUpLine();
+                break;
+            case DOWN:
+                this.allBoxes[y][x].addDownLine();
+                break;
+            case LEFT:
+                this.allBoxes[y][x].addLeftLine();
+                break;
+            case RIGHT:
+                this.allBoxes[y][x].addRightLine();
+                break;
         }
     }
 }
