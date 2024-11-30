@@ -48,7 +48,11 @@ public final class DotsAndBoxes {
         int sumBoxB = 0;
         int i = 0;
 
-        if (i >= 0) {
+        int boxX = 0;
+        int boxY = 0;
+        String boxSide = "";
+
+        while (i >= 0) {
             if ((i % 2) == 0) {
                 System.out.println("Player A:");
             }
@@ -59,31 +63,46 @@ public final class DotsAndBoxes {
             String input = scanner.nextLine();
             while (true) {
                 input = input.trim();
+                while (true) {
+                    if (input.length() > 4) {
+                        break;
+                    }
+                    else {
+                        System.out.println("Wrong input! Enter Again.");
+                        input = scanner.nextLine();
+                    }
+                }
+
                 char letter = input.charAt(0);
-                char number = input.charAt(1);
+                char num = input.charAt(1);
+                int number = Character.getNumericValue(num);
                 int success = 0;
                 for (int x = 0; x < Integer.parseInt(args[0]); x++) {
                     if (letter == ALPHABET[x]) {
                         success++;
+                        boxX = x;
                     }
                 }
-                if (number >= 1 && number <= Integer.parseInt(args[0])) {
+                if ((number > 0) && (number < (Integer.parseInt(args[0]) + 1))) {
                     success++;
+                    boxY = number - 1;
                 }
                 input = input.substring(3);
                 input = input.trim();
                 if (input.toLowerCase().equals(UP) || input.toLowerCase().equals(DOWN)) {
                     success++;
+                    boxSide = input.toLowerCase();
                 }
                 if (input.toLowerCase().equals(LEFT) || input.toLowerCase().equals(RIGHT)) {
                     success++;
+                    boxSide = input.toLowerCase();
                 }
 
                 if (success == 3) {
                     break;
                 }
                 else {
-                    System.out.println("Wrong input! Enteragain");
+                    System.out.println("Wrong input! Enter Again");
                     input = scanner.nextLine();
                 }
 
