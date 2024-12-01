@@ -95,6 +95,7 @@ public class Field {
                     case PLAYER2:
                         this.field[posY][posX] = PLAYERB;
                         break;
+                    default:
                 }
             }
         }
@@ -156,7 +157,7 @@ public class Field {
             case LEFT:
                 this.allBoxes[y][x].addLeftLine();
                 success = success + this.allBoxes[y][x].checkIfPlayerGetsField(i);
-                if (!(x == (this.allBoxes.length - 1))) {
+                if (!(x == 0)) {
                     this.allBoxes[y][x - 1].addRightLine();
                     success = success + this.allBoxes[y][x - 1].checkIfPlayerGetsField(i);
                 }
@@ -164,11 +165,12 @@ public class Field {
             case RIGHT:
                 this.allBoxes[y][x].addRightLine();
                 success = success + this.allBoxes[y][x].checkIfPlayerGetsField(i);
-                if (!(x == 0)) {
+                if (!(x == this.allBoxes.length - 1)) {
                     this.allBoxes[y][x + 1].addLeftLine();
                     success = success + this.allBoxes[y][x + 1].checkIfPlayerGetsField(i);
                 }
                 break;
+            default:
         }
         return success;
     }

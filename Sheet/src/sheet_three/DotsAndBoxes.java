@@ -41,20 +41,15 @@ public final class DotsAndBoxes {
         field.fillCharBlank();
         field.printField();
 
-        int[] sumBox = new int[2];
+        int[] sumBox = {0, 0};
         int i = 0;
 
         while (i >= 0) {
-            if ((i % 2) == 0) {
-                System.out.println("Player A:");
-            } else {
-                System.out.println("Player B:");
-            }
+            printPlayer(i);
 
             String input = scanner.nextLine();
             int boxX = 0;
             int boxY = 0;
-            String boxSide = "";
 
             while (true) {
                 input = input.trim();
@@ -89,54 +84,72 @@ public final class DotsAndBoxes {
                     case UP:
                         if (!field.getAllBoxes()[boxY][boxX].getUpLine()) {
                             success++;
-                            boxSide = input.toLowerCase();
                         }
                         break;
                     case DOWN:
                         if (!field.getAllBoxes()[boxY][boxX].getDownLine()) {
                             success++;
-                            boxSide = input.toLowerCase();
                         }
                         break;
                     case LEFT:
                         if (!field.getAllBoxes()[boxY][boxX].getLeftLine()) {
                             success++;
-                            boxSide = input.toLowerCase();
                         }
                         break;
                     case RIGHT:
                         if (!field.getAllBoxes()[boxY][boxX].getRightLine()) {
                             success++;
-                            boxSide = input.toLowerCase();
                         }
                         break;
+                    default:
                 }
 
 
                 if (success == 3) {
                     break;
-                }
-                else if ( success == 2) {
+                } else if (success == 2) {
                     System.out.println("Your entered line is already used! Enter Again.");
                     input = scanner.nextLine();
-                }
-                else {
+                } else {
                     System.out.println("Wrong input! Enter Again.");
                     input = scanner.nextLine();
                 }
 
             }
 
-            int add = field.addLine(boxX, boxY, input.toLowerCase(), i);
-            if (add > 0) {
-                sumBox[i % 2] = sumBox[i % 2] + add;
+            if (field.addLine(boxX, boxY, input.toLowerCase(), i) > 0) {
+                sumBox[i % 2] = sumBox[i % 2] + field.addLine(boxX, boxY, input.toLowerCase(), i);
                 i = i - 1;
             }
             field.printField();
 
             i++;
+
+            if ((sumBox[0] + sumBox[1]) == (Integer.parseInt(args[0]) * Integer.parseInt(args[0]))) {
+                break;
+            }
         }
+        scanner.close();
+        gameOver(sumBox[0], sumBox[1]);
 
 
+    }
+
+    public static void gameOver(int a, int b) {
+        if (a < b) {
+            System.out.println("Game over. Player B wins");
+        } else if (a > b) {
+            System.out.println("Game over. Player A wins");
+        } else {
+            System.out.println("Game Over. Tie!");
+        }
+    }
+
+    public static void printPlayer(int i) {
+        if ((i % 2) == 0) {
+            System.out.println("Player A:");
+        } else {
+            System.out.println("Player B:");
+        }
     }
 }
