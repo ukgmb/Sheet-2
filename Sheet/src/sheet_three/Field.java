@@ -134,32 +134,42 @@ public class Field {
 
     }
 
-    public void addLine(int x, int y, String side) {
+    public int addLine(int x, int y, String side, int i) {
+        int success = 0;
         switch (side) {
             case UP:
                 this.allBoxes[y][x].addUpLine();
+                success = success + this.allBoxes[y][x].checkIfPlayerGetsField(i);
                 if (!(y == 0)) {
-                    this.allBoxes[y -1][x].addDownLine();
+                    this.allBoxes[y - 1][x].addDownLine();
+                    success = success + this.allBoxes[y - 1][x].checkIfPlayerGetsField(i);
                 }
                 break;
             case DOWN:
                 this.allBoxes[y][x].addDownLine();
+                success = success + this.allBoxes[y][x].checkIfPlayerGetsField(i);
                 if (!(y == (this.allBoxes.length - 1))) {
                     this.allBoxes[y + 1][x].addUpLine();
+                    success = success + this.allBoxes[y + 1][x].checkIfPlayerGetsField(i);
                 }
                 break;
             case LEFT:
                 this.allBoxes[y][x].addLeftLine();
+                success = success + this.allBoxes[y][x].checkIfPlayerGetsField(i);
                 if (!(x == (this.allBoxes.length - 1))) {
                     this.allBoxes[y][x - 1].addRightLine();
+                    success = success + this.allBoxes[y][x - 1].checkIfPlayerGetsField(i);
                 }
                 break;
             case RIGHT:
                 this.allBoxes[y][x].addRightLine();
+                success = success + this.allBoxes[y][x].checkIfPlayerGetsField(i);
                 if (!(x == 0)) {
-                    this.allBoxes[y -1][x].addLeftLine();
+                    this.allBoxes[y][x + 1].addLeftLine();
+                    success = success + this.allBoxes[y][x + 1].checkIfPlayerGetsField(i);
                 }
                 break;
         }
+        return success;
     }
 }

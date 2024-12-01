@@ -127,9 +127,9 @@ public final class DotsAndBoxes {
 
             }
 
-            field.addLine(boxX, boxY, input.toLowerCase());
-            if (field.getAllBoxes()[boxY][boxX].checkIfPlayerGetsField(i)) {
-                sumBox[i % 2]++;
+            int add = field.addLine(boxX, boxY, input.toLowerCase(), i);
+            if (add > 0) {
+                sumBox[i % 2] = sumBox[i % 2] + add;
                 i = i - 1;
             }
             field.printField();
