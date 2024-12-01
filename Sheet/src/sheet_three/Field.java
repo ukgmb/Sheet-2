@@ -138,15 +138,27 @@ public class Field {
         switch (side) {
             case UP:
                 this.allBoxes[y][x].addUpLine();
+                if (!(y == 0)) {
+                    this.allBoxes[y -1][x].addDownLine();
+                }
                 break;
             case DOWN:
                 this.allBoxes[y][x].addDownLine();
+                if (!(y == (this.allBoxes.length - 1))) {
+                    this.allBoxes[y + 1][x].addUpLine();
+                }
                 break;
             case LEFT:
                 this.allBoxes[y][x].addLeftLine();
+                if (!(x == (this.allBoxes.length - 1))) {
+                    this.allBoxes[y][x - 1].addRightLine();
+                }
                 break;
             case RIGHT:
                 this.allBoxes[y][x].addRightLine();
+                if (!(x == 0)) {
+                    this.allBoxes[y -1][x].addLeftLine();
+                }
                 break;
         }
     }
