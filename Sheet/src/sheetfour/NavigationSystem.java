@@ -11,5 +11,6 @@ public class NavigationSystem {
         System.out.println(commands.getInputType());
 
 
+
     }
 }
