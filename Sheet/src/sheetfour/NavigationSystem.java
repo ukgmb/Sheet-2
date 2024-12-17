@@ -5,6 +5,7 @@ import java.util.Scanner;
 /**
  * This class represents the navigation system of the rover.
  * It navigates the rover through the terrain and is useful for finding a path to its destination.
+ *
  * @author ukgmb
  */
 public class NavigationSystem {
