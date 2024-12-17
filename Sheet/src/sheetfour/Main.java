@@ -10,5 +10,6 @@ public final class Main {
         NavigationSystem navigation = new NavigationSystem();
         navigation.runNavigationSystem();
         navigation.terrain.printTerrain();
+        navigation.terrain.checkForValidTerrain();
     }
 }

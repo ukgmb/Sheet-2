@@ -19,6 +19,9 @@ public class Terrain {
         this.visibleTerrain = new char[height][width];
     }
 
+    /**
+     * Reads the measured terrain by the rover in the terminal.
+     */
     public void readTerrain() {
         Scanner scanner = new Scanner(System.in);
 
@@ -29,6 +32,9 @@ public class Terrain {
         }
     }
 
+    /**
+     * Prints the saved terrain.
+     */
     public void printTerrain() {
         for(int y = 0; y < this.visibleTerrain.length; y++) {
             for(int x = 0; x < this.visibleTerrain[y].length; x++) {
@@ -36,5 +42,9 @@ public class Terrain {
             }
             System.out.println();
         }
+    }
+
+    public void checkForValidTerrain() {
+
     }
 }
