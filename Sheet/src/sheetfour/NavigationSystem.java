@@ -1,15 +1,25 @@
 package sheetfour;
 
+import java.util.Scanner;
+
 public class NavigationSystem {
 
-    public static void main(String[] args) {
+    public Terrain terrain;
 
+    public void runNavigationSystem() {
+        Scanner scanner = new Scanner(System.in);
         Commands commands = new Commands();
 
-        commands.scanForInput();
-        System.out.println(commands.isNewInputSyntaxCorrect());
-        System.out.println(commands.getInputType());
+        String input;
+        do {
+            input = scanner.nextLine();
+        }
+        while (!commands.isNewInputSyntaxCorrect(input));
 
+        if (commands.getCommandType().equals(CommandType.NEW_TERRAIN)) {
+            this.terrain = new Terrain(4, 4);
+            this.terrain.readTerrain();
+        }
 
 
     }
