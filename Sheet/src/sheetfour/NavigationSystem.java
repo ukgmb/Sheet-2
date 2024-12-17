@@ -27,10 +27,14 @@ public class NavigationSystem {
         while (!commands.isNewInputSyntaxCorrect(input));
 
         if (commands.getCommandType().equals(CommandType.NEW_TERRAIN)) {
-            this.terrain = new Terrain(4, 4);
+            this.terrain = new Terrain(2, 2);
             this.terrain.readTerrain();
         }
 
+
+    }
+
+    public void commandMove() {
 
     }
 }
