@@ -2,10 +2,19 @@ package sheetfour;
 
 import java.util.Scanner;
 
+/**
+ * This class represents the navigation system of the rover.
+ * It navigates the rover through the terrain and is useful for finding a path to its destination.
+ * @author ukgmb
+ */
 public class NavigationSystem {
 
     public Terrain terrain;
 
+    /**
+     * Starts and runs the rover's navigation system.
+     * It receives commands from the rover and executes them.
+     */
     public void runNavigationSystem() {
         Scanner scanner = new Scanner(System.in);
         Commands commands = new Commands();

@@ -44,6 +44,9 @@ public class Terrain {
         }
     }
 
+    /**
+     * Checks the terrain for validity.
+     */
     public void checkForValidTerrain() {
 
     }
