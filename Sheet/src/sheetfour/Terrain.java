@@ -20,6 +20,8 @@ public class Terrain {
     private static final char DESTINATION = 'x';
     private static final char ROVER_IS_DESTINATION = 'X';
     private static final String SYNTAX = " /\\_|*RxX";
+    private static final String ALL_ROCKS = "/\\_|";
+    private static final int MAX_NUM_R_X = 1;
 
 
     private final char[][] visibleTerrain;
@@ -75,15 +77,46 @@ public class Terrain {
                 return false;
             }
         }
+        int count_R = 0;
+        int count_x = 0;
+        int count_X = 0;
         for (int y = 0; y < this.visibleTerrain.length; y++) {
             for (int x = 0; x < this.visibleTerrain[y].length; x++) {
                 if (SYNTAX.indexOf(this.visibleTerrain[y][x]) == -1) {
                     return false;
                 }
+                switch (this.visibleTerrain[y][x]) {
+                    case ROVER:
+                        count_R++;
+                        break;
+                    case DESTINATION:
+                        count_x++;
+                        break;
+                    case ROVER_IS_DESTINATION:
+                        count_X++;
+                        break;
+                    default:
+                }
+            }
+        }
+        if (!((count_R == MAX_NUM_R_X && count_x == count_R) || (count_X == MAX_NUM_R_X && count_x + count_R == 0))) {
+            return false;
+        }
+
+
+        return true;
+
+    }
+
+    public boolean checkForValidRocks() {
+        for (int y = 0; y < this.visibleTerrain.length; y++) {
+            for (int x = 0; x < this.visibleTerrain[y].length; x++) {
+                if (ALL_ROCKS.indexOf(this.visibleTerrain[y][x]) != -1) {
+                    int o;
+                }
             }
         }
 
         return true;
-
     }
 }

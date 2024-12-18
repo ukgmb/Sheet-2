@@ -34,7 +34,4 @@ public class NavigationSystem {
 
     }
 
-    public void commandMove() {
-
-    }
 }
