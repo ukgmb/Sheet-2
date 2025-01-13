@@ -23,29 +23,12 @@ public final class Application {
      * @param args The command line arguments.
      */
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        Command start = new StartCommand(new HuntForMisterX());
-        while (true) {
-            String input = scanner.nextLine();
-            try {
-                execute(input);
-            }
-            catch (InvalidCommandException exception) {
-                System.err.println(exception.getMessage());
-            }
 
+        HuntForMisterX game = new HuntForMisterX();
+        UserInteraction ui = new UserInteraction(game);
+        ui.start();
 
-        }
 
     }
 
-    private static void execute(String input) throws InvalidCommandException {
-        Command start = new StartCommand(new HuntForMisterX());
-        if (input.matches(start.getRegex())) {
-            start.execute(input.split(" "));
-            return;
-        }
-        throw start.getException();
-
-    }
 }

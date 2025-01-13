@@ -11,8 +11,8 @@ import sheetfive.exceptions.InvalidCommandException;
 public abstract class Command {
 
     protected final String regex;
+    protected final HuntForMisterX game;
     private InvalidCommandException exception;
-    private final HuntForMisterX game;
 
     /**
      * Constructs a new command of any type with exception.
@@ -34,11 +34,12 @@ public abstract class Command {
     public abstract void execute(String[] arguments);
 
     /**
-     * Returns the regex of the command.
-     * @return The regex of the command
+     * Returns whether the string input on the terminal matches with the command arguments.
+     * @param input Input on the terminal
+     * @return {@code true}, if input matches command syntax
      */
-    public String getRegex() {
-        return this.regex;
+    public boolean inputMatchesCommand(String input) {
+        return input.matches(this.regex);
     }
 
     /**

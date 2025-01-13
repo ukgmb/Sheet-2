@@ -9,7 +9,7 @@ import sheetfive.exceptions.InvalidCommandSyntaxException;
  * @author ukgmb
  */
 public class StartCommand extends Command {
-    private static final String PATTERN = "^start\\s[A-Z][1-3][R,V]";
+    private static final String PATTERN = "^start\\s[A,E,I,S,X][1-3][R,V]$";
 
     /**
      * Constructs a new start command.
