@@ -1,6 +1,6 @@
 package sheetfive.commands;
 
-import sheetfive.HuntForMisterX;
+import sheetfive.game.HuntForMisterX;
 import sheetfive.exceptions.InvalidCommandException;
 
 /**

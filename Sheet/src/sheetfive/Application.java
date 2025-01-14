@@ -1,11 +1,6 @@
 package sheetfive;
 
-import sheetfive.commands.Command;
-import sheetfive.commands.StartCommand;
-import sheetfive.exceptions.InvalidCommandException;
-import sheetfive.exceptions.InvalidCommandSyntaxException;
-
-import java.util.Scanner;
+import sheetfive.game.HuntForMisterX;
 
 /**
  * This application runs the game.

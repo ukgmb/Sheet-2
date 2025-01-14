@@ -8,6 +8,7 @@ import sheetfive.commands.PlaceCommand;
 import sheetfive.commands.QuitCommand;
 import sheetfive.commands.StartCommand;
 import sheetfive.exceptions.InvalidCommandSyntaxException;
+import sheetfive.game.HuntForMisterX;
 
 /**
  * This class handles the user interaction.

@@ -1,4 +1,4 @@
-package sheetfive;
+package sheetfive.game;
 
 /**
  * Represents a game of hunt for mister x.
