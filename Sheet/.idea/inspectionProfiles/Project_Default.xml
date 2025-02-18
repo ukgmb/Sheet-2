@@ -1,0 +1,85 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="BadExceptionDeclared" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="exceptionsString" value="" />
+      <option name="exceptions">
+        <value />
+      </option>
+      <option name="ignoreTestCases" value="false" />
+      <option name="ignoreLibraryOverrides" value="false" />
+    </inspection_tool>
+    <inspection_tool class="BadExceptionThrown" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="exceptionsString" value="" />
+      <option name="exceptions">
+        <value />
+      </option>
+    </inspection_tool>
+    <inspection_tool class="BlockMarkerComments" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="CastToIncompatibleInterface" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConstantValueVariableUse" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DollarSignInName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EqualsAndHashcode" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EqualsCalledOnEnumConstant" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="HardcodedLineSeparators" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="HtmlTagCanBeJavadocTag" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="IfStatementWithTooManyBranches" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="3" />
+    </inspection_tool>
+    <inspection_tool class="ImplicitNumericConversion" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreWideningConversions" value="true" />
+      <option name="ignoreCharConversions" value="false" />
+      <option name="ignoreConstantConversions" value="false" />
+    </inspection_tool>
+    <inspection_tool class="InstanceofCatchParameter" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="JavadocHtmlLint" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="LocalCanBeFinal" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="REPORT_VARIABLES" value="true" />
+      <option name="REPORT_PARAMETERS" value="false" />
+      <option name="REPORT_CATCH_PARAMETERS" value="false" />
+      <option name="REPORT_IMPLICIT_FINALS" value="false" />
+    </inspection_tool>
+    <inspection_tool class="LoopWithImplicitTerminationCondition" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="MethodMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_onlyPrivateOrFinal" value="false" />
+      <option name="m_ignoreEmptyMethods" value="true" />
+    </inspection_tool>
+    <inspection_tool class="MisspelledMethodName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="NegatedConditionalExpression" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="NestingDepth" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="5" />
+    </inspection_tool>
+    <inspection_tool class="NewExceptionWithoutArguments" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="NonExceptionNameEndsWithException" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="NonFinalFieldOfException" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ObjectToString" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="OverlyComplexArithmeticExpression" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="6" />
+    </inspection_tool>
+    <inspection_tool class="PointlessIndexOfComparison" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ProtectedField" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="RandomDoubleForRandomInteger" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="SimplifiableEqualsExpression" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="StaticFieldReferenceOnSubclass" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="StringConcatenationInFormatCall" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="StringReplaceableByStringBuffer" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="onlyWarnOnLoop" value="true" />
+    </inspection_tool>
+    <inspection_tool class="SuspiciousLiteralUnderscore" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="SwitchStatementWithTooManyBranches" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="10" />
+    </inspection_tool>
+    <inspection_tool class="SystemExit" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ThreadDeathRethrown" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="TooBroadCatch" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="TooBroadThrows" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnnecessaryConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnnecessarySuperConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnreachableCode" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UpperCaseFieldNameNotConstant" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UseOfAnotherObjectsPrivateField" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreSameClass" value="true" />
+      <option name="ignoreEquals" value="false" />
+    </inspection_tool>
+  </profile>
+</component>
