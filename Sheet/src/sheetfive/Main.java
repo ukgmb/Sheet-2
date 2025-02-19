@@ -7,9 +7,9 @@ import sheetfive.game.HuntForMisterX;
  *
  * @author ukgmb
  */
-public final class Application {
+public final class Main {
 
-    private Application() {
+    private Main() {
 
     }
 
