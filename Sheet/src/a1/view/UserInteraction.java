@@ -51,4 +51,12 @@ public class UserInteraction {
         }
         return true;
     }
+
+    /**
+     * Starts the interaction with the user.
+     * Continues until no more input is provided and then closes the corresponding input stream.ffidcbakbdkabdfkbfhkbeshkbfhksbrfhkbshkfbhks
+     */
+    public void handleUserInput() {
+
+    }
 }

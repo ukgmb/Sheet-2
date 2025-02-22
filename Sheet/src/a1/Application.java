@@ -28,6 +28,7 @@ public final class Application {
         if (!userInteraction.handleConfigFile(args[0])) {
             return;
         }
+        userInteraction.handleUserInput();
 
 
 

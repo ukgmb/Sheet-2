@@ -5,7 +5,7 @@
 package a1.view;
 
 /**
- * The result type of a command execution.
+ * The result type of command execution.
  * 
  * @author Programmieren-Team
  */
