@@ -1,5 +1,6 @@
 package a1;
 
+import a1.model.Game;
 import a1.view.UserInteraction;
 /**
  * The class offering the entry point for the application.
@@ -24,7 +25,8 @@ public final class Application {
             return;
         }
 
-        UserInteraction userInteraction = new UserInteraction(System.in, System.out, System.err);
+        Game game = new Game();
+        UserInteraction userInteraction = new UserInteraction(System.in, System.out, System.err, game);
         if (!userInteraction.handleConfigFile(args[0])) {
             return;
         }
