@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,10 +31,11 @@ public class UserInteraction {
     /**
      * Constructs a new user interface.
      * Provided input source will be closed when finished.
-     * @param inputSource Input source used to receive user's input
+     *
+     * @param inputSource   Input source used to receive user's input
      * @param defaultStream Default print stream used to print results of application
-     * @param errorStream Error Stream used to print error messages
-     * @param game The current game playing
+     * @param errorStream   Error Stream used to print error messages
+     * @param game          The current game playing
      */
     public UserInteraction(InputStream inputSource, PrintStream defaultStream, PrintStream errorStream, Game game) {
         this.inputSource = inputSource;
@@ -46,27 +48,35 @@ public class UserInteraction {
 
     /**
      * Handles the configuration file.
+     *
      * @param path Path of the configuration file
-     * @return {@code true}, if file was found. Else, returns {@code false}
      */
-    public boolean handleConfigFile(String path) {
-        List<String> allLines;
+    public void handleConfigFile(Path path) {
+        List<String> allLines = new ArrayList<>();
 
         try {
-            allLines = Files.readAllLines(Path.of(path));
+            allLines = Files.readAllLines(path);
         } catch (IOException e) {
             this.errorStream.printf(ERROR_PREFIX, ERROR_MESSAGE_FILE_NOT_FOUND);
-            return false;
+            this.isRunning = false;
         }
 
-        final Configurator configurator = new Configurator(this.game);
-        handleResult(configurator.configure(allLines));
-        return true;
+        final Configurator configurator = new Configurator(this.game, allLines);
+
+        Result result = configurator.readLines();
+        if (result.getType() == ResultType.FAILURE) {
+            this.isRunning = false;
+            this.errorStream.printf(ERROR_PREFIX, result.getMessage());
+        } else {
+            printList(allLines);
+            this.defaultStream.println();
+            this.defaultStream.println(configurator.getDeclarationCount());
+        }
     }
 
     /**
      * Starts the interaction with the user.
-     * Continues until no more input is provided and then closes the corresponding input stream.ffidcbakbdkabdfkbfhkbeshkbfhksbrfhkbshkfbhks
+     * Continues until no more input is provided and then closes the corresponding input stream.
      */
     public void handleUserInput() {
 
@@ -81,7 +91,13 @@ public class UserInteraction {
             case SUCCESS -> this.defaultStream;
             case FAILURE -> this.errorStream;
         };
-        outputStream.println((result.getType() == ResultType.FAILURE ? ERROR_PREFIX : "")
-                + (result.getMessage() == null ? "" : result.getMessage()));
+        outputStream.println((result.getType() == ResultType.FAILURE ? ERROR_PREFIX.formatted(result.getMessage())
+                : ""));
+    }
+
+    private <T> void printList(List<T> list) {
+        for (T entry: list) {
+            this.defaultStream.println(entry);
+        }
     }
 }

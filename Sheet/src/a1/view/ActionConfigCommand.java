@@ -1,6 +1,6 @@
 package a1.view;
 
-import a1.model.Effect;
+import a1.model.effects.Effect;
 import a1.model.Element;
 
 import java.util.Collection;

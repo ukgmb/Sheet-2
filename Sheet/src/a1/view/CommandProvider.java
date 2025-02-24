@@ -18,5 +18,5 @@ public interface CommandProvider<T> {
      * @return the constructed command
      * @throws InvalidArgumentException if parsing/retrieving an argument fails
      */
-    Command<T> provide(Arguments arguments) throws InvalidArgumentException;
+    Command<T> provide(ArgumentsCommand arguments) throws InvalidArgumentException;
 }
