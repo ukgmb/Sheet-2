@@ -52,7 +52,10 @@ public class ArgumentsEffect {
         this.arguments = new LinkedList<>(Arrays.asList(split));
     }
 
-    private String retrieveArgument() {
+    private String retrieveArgument() throws InvalidArgumentException {
+        if (isExhausted()) {
+            throw new InvalidArgumentException(ERROR_MESSAGE_TOO_FEW_ARGUMENTS);
+        }
         return this.arguments.remove(0);
     }
 
@@ -72,10 +75,6 @@ public class ArgumentsEffect {
      * @throws InvalidArgumentException if parsing the hit rate failed
      */
     public int parseHitRate() throws InvalidArgumentException {
-        if (isExhausted()) {
-            throw new InvalidArgumentException(ERROR_MESSAGE_TOO_FEW_ARGUMENTS);
-        }
-
         String argument = retrieveArgument();
         int value;
         try {
@@ -100,10 +99,6 @@ public class ArgumentsEffect {
      * @throws InvalidArgumentException if parsing of searched enum value fails.
      */
     public <T extends Enum<T>> T parseEnumValue(boolean lowerCase, T[] values) throws InvalidArgumentException {
-        if (isExhausted()) {
-            throw new InvalidArgumentException(ERROR_MESSAGE_TOO_FEW_ARGUMENTS);
-        }
-
         String argument = retrieveArgument();
         for (T value: values) {
             if (lowerCase && value.name().toLowerCase().equals(argument)) {
@@ -146,9 +141,6 @@ public class ArgumentsEffect {
     }
 
     private StrengthType parseStrengthType() throws InvalidArgumentException {
-        if (isExhausted()) {
-            throw new InvalidArgumentException(ERROR_MESSAGE_TOO_FEW_ARGUMENTS);
-        }
 
         return parseEnumValue(true, StrengthType.values());
     }
