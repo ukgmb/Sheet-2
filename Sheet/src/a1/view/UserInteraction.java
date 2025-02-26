@@ -1,6 +1,7 @@
 package a1.view;
 
 import a1.model.Game;
+import a1.view.configurator.Configurator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,8 +51,9 @@ public class UserInteraction {
      * Handles the configuration file.
      *
      * @param path Path of the configuration file
+     * @return {@code true}, if parsing config file successes. Else, returns {@code false}
      */
-    public void handleConfigFile(Path path) {
+    public boolean handleConfigFile(Path path) {
         List<String> allLines = new ArrayList<>();
 
         try {
@@ -67,10 +69,13 @@ public class UserInteraction {
         if (result.getType() == ResultType.FAILURE) {
             this.isRunning = false;
             this.errorStream.printf(ERROR_PREFIX, result.getMessage());
+            return false;
         } else {
             printList(allLines);
             this.defaultStream.println();
             this.defaultStream.println(configurator.getDeclarationCount());
+            configurator.loadConfiguration();
+            return true;
         }
     }
 

@@ -1,6 +1,9 @@
-package a1.view;
+package a1.view.configurator;
 
+import a1.model.Action;
 import a1.model.Game;
+import a1.model.Monster;
+import a1.view.*;
 
 import java.util.*;
 
@@ -19,12 +22,17 @@ public class Configurator {
     private static final String SUFFIX_MESSAGE_LOADED_CONFIGURATION = ".";
     private static final String WHITESPACE = " ";
     private static final String PLURAL_S_SUFFIX = "s";
-
+    private static final String SAME_ACTION_NAME_ERROR = "all actions must have different names. '%s' was used"
+            + " multiple times.";
+    private static final String SAME_MONSTER_NAME_ERROR = "all monsters must have different names. '%s' was used"
+            + " multiple times.";
+    private static final String WRONG_ORDER_ERROR = "actions have to be declared first, then monsters.";
     private final Game game;
-    private final Queue<Command<Configurator>> allDeclarations;
-    private final Set<ConfigKeyword> configKeywords = EnumSet.allOf(ConfigKeyword.class);
+    private final List<Action> allDeclaredActions;
+    private final Set<Monster> allDeclaredMonsters;
     private final List<String> allLines;
     private final Map<ConfigKeyword, Integer> count;
+    private boolean allActionsDeclared;
 
     /**
      * Constructs a new configurator.
@@ -34,9 +42,11 @@ public class Configurator {
      */
     public Configurator(Game game, List<String> allLines) {
         this.game = game;
-        this.allDeclarations = new ArrayDeque<>();
+        this.allDeclaredActions = new ArrayList<>();
+        this.allDeclaredMonsters = new HashSet<>();
         this.allLines = allLines;
         this.count = new HashMap<>();
+        this.allActionsDeclared = false;
     }
 
     /**
@@ -48,7 +58,7 @@ public class Configurator {
 
         Iterator<String> iterator = this.allLines.iterator();
         while (iterator.hasNext()) {
-            String parsedLine = iterator.next();
+            String parsedLine = iterator.next().trim();
             if (parsedLine.isBlank()) {
                 continue;
             }
@@ -73,25 +83,67 @@ public class Configurator {
                 }
             }
 
-            ArgumentsCommand arguments = new ArgumentsCommand(argumentsInput);
-
-            try {
-                Command<Configurator> command = keyword.provide(arguments);
-                this.allDeclarations.add(command);
-                this.count.merge(keyword, 1, Integer::sum);
-            } catch (InvalidArgumentException e) {
-                return Result.error(e.getMessage());
+            Result handling = handleCommand(argumentsInput, keyword);
+            if (handling.getType() == ResultType.FAILURE) {
+                return handling;
             }
 
         }
         return Result.success();
     }
 
+    private Result handleCommand(List<String> argumentsInput, ConfigKeyword keyword) {
+        ArgumentsConfiguration arguments = new ArgumentsConfiguration(argumentsInput, this.allDeclaredActions);
 
-    private ConfigKeyword retrieveKeyword(String keyword) {
-        for (ConfigKeyword configKeyword : configKeywords) {
-            if (configKeyword.matches(keyword)) {
-                return configKeyword;
+        try {
+            if (keyword == ConfigKeyword.ACTION) {
+                if (this.allActionsDeclared) {
+                    return Result.error(WRONG_ORDER_ERROR);
+                }
+                Action action = ProviderAction.ACTION.provide(arguments);
+                if (sameNameAction(action)) {
+                    return Result.error(SAME_ACTION_NAME_ERROR.formatted(action.getName()));
+                }
+                this.allDeclaredActions.add(action);
+
+            } else {
+                Monster monster = ProviderMonster.MONSTER.provide(arguments);
+                if (sameNameMonster(monster)) {
+                    return Result.error(SAME_MONSTER_NAME_ERROR.formatted(monster.getName()));
+                }
+                this.allDeclaredMonsters.add(monster);
+                this.allActionsDeclared = true;
+            }
+            this.count.merge(keyword, 1, Integer::sum);
+        } catch (InvalidArgumentException e) {
+            return Result.error(e.getMessage());
+        }
+        return Result.success();
+    }
+
+    private boolean sameNameAction(Action input) {
+        for (Action action : this.allDeclaredActions) {
+            if (action.getName().equals(input.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean sameNameMonster(Monster input) {
+        for (Monster monster : this.allDeclaredMonsters) {
+            if (monster.getName().equals(input.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private ConfigKeyword retrieveKeyword(String input) {
+        for (ConfigKeyword keyword : ConfigKeyword.values()) {
+            if (keyword.matches(input)) {
+                return keyword;
             }
         }
         return null;
@@ -113,6 +165,13 @@ public class Configurator {
 
         return joiner.toString();
 
+    }
+
+    /**
+     * Loads the configuration into the game.
+     */
+    public void loadConfiguration() {
+        this.game.loadMonsters(this.allDeclaredMonsters);
     }
 
 }

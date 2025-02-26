@@ -51,4 +51,8 @@ public enum Element {
     public String toString() {
         return PRINTABLE_NAME;
     }
+
+    public int getInt() {
+        return this.beatsElementOrdinal;
+    }
 }

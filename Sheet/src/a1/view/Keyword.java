@@ -5,17 +5,18 @@
 package a1.view;
 
 /**
- * This interface represents a keyword that can be used to identify a command.
- * @param <T> the type of the value that is handled by the command
+ * This interface represents a keyword that can be used to identify a user's input.
+ * @param <T> the type of the value that is handled by the user's input
+ * @param <S> the type of arguments
  *     
- * @author Programmieren-Team
+ * @author ukgmb
  */
-public interface Keyword<T> extends CommandProvider<T> {
+public interface Keyword<T, S> extends Provider<T, S> {
 
     /**
-     * Returns whether the keyword matches the given command.
-     * @param command the command to be checked
-     * @return whether the keyword matches the command
+     * Returns whether the keyword matches the given input.
+     * @param input the input to be checked
+     * @return whether the keyword matches the input
      */
-    boolean matches(String command);
+    boolean matches(String input);
 }

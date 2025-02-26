@@ -32,7 +32,7 @@ public class Monster {
      * @param defenceRate Rate of defence
      * @param speedRate Rate of speed
      */
-    public Monster(String name, int hitPoints, int attackRate, int defenceRate, int speedRate, Element element,
+    public Monster(String name, Element element,int hitPoints, int attackRate, int defenceRate, int speedRate,
                    Set<Action> actions) {
         this.name = name;
 
@@ -46,5 +46,14 @@ public class Monster {
         this.element = element;
         this.actions = Set.copyOf(actions);
         this.condition = StatusCondition.OK;
+
+    }
+
+    /**
+     * Returns the name of the monster.
+     * @return The name of the monster.
+     */
+    public String getName() {
+        return name;
     }
 }

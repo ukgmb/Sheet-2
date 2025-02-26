@@ -1,6 +1,8 @@
 package a1.model;
 
 import a1.model.effects.Effect;
+
+
 import java.util.List;
 
 /**
@@ -23,8 +25,14 @@ public class Action {
     public Action(String name, Element element, List<Effect> effects) {
         this.name = name;
         this.element = element;
-        this.effects = List.copyOf(effects);
+        this.effects = effects;
     }
 
-
+    /**
+     * Returns the name of the action.
+     * @return Name of the action.
+     */
+    public String getName() {
+        return name;
+    }
 }

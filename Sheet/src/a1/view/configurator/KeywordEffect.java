@@ -1,16 +1,17 @@
-package a1.model.effects;
+package a1.view.configurator;
 
 import a1.model.StatusCondition;
-import a1.view.ArgumentsEffect;
-import a1.view.EffectProvider;
+import a1.model.effects.*;
 import a1.view.InvalidArgumentException;
+import a1.view.Keyword;
+import a1.view.Provider;
 
 /**
  * Describes the keywords used while configuring to the predefined effects.
  *
  * @author ukgmb
  */
-public enum EffectKeyword implements EffectProvider {
+public enum KeywordEffect implements Keyword<Effect, ArgumentsEffect> {
 
     /**
      * Configures the {@link EffectDamage}.
@@ -40,15 +41,19 @@ public enum EffectKeyword implements EffectProvider {
     HEAL(arguments -> new EffectHeal(arguments.parseEnumValue(true, TargetMonster.values()),
             arguments.parseStrength(), arguments.parseHitRate())),
     /**
+     * Configures the {@link EffectRepeat}.
+     */
+    REPEAT(arguments -> new EffectRepeat(arguments.parseCount(), arguments.parseRepeatEffects())),
+    /**
      * Configures the {@link EffectContinue}.
      */
     CONTINUE(arguments -> new EffectContinue(arguments.parseHitRate()));
 
     private static final char WORD_SEPARATOR = '_';
 
-    private final EffectProvider provider;
+    private final Provider<Effect, ArgumentsEffect> provider;
 
-    EffectKeyword(EffectProvider provider) {
+    KeywordEffect(Provider<Effect, ArgumentsEffect> provider) {
         this.provider = provider;
     }
 
@@ -57,16 +62,12 @@ public enum EffectKeyword implements EffectProvider {
         return this.provider.provide(arguments);
     }
 
-    /**
-     * Returns whether the entered String matches the enum value or not.
-     * @param input The String input
-     * @return {@code true}, if string matches. Else, returns {@code false}
-     */
+    @Override
     public boolean matches(String input) {
         StringBuilder enumValue = new StringBuilder(this.name().toLowerCase());
         for (int i = 0; i < enumValue.length() - 1; i++) {
             if (enumValue.charAt(i) == WORD_SEPARATOR) {
-                enumValue.setCharAt(i + 1, Character.toUpperCase(enumValue.charAt(i)));
+                enumValue.setCharAt(i + 1, Character.toUpperCase(enumValue.charAt(i + 1)));
             }
         }
         String keyword = enumValue.toString().replaceAll(Character.toString(WORD_SEPARATOR), "");

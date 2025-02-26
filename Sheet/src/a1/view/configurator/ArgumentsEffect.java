@@ -1,6 +1,7 @@
-package a1.view;
+package a1.view.configurator;
 
 import a1.model.effects.*;
+import a1.view.InvalidArgumentException;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -31,6 +32,8 @@ public class ArgumentsEffect {
     private static final String ERROR_MESSAGE_ENUM_PREFIX = "%s must be ";
     private static final String ERROR_MESSAGE_ENUM_DELIMITER = ", ";
     private static final String ERROR_MESSAGE_ENUM_SUFFIX = ". But provided %s.";
+    private static final String ERROR_MESSAGE_RANDOM_INTERVAL_INVALID = "the interval for the random count is invalid."
+            + "Min value is higher than max value";
 
     private static final String DELIMITER_WHITESPACE = " ";
 
@@ -42,14 +45,17 @@ public class ArgumentsEffect {
 
     private final List<String> arguments;
 
+    private final ArgumentsConfiguration configuration;
+
     /**
      * Constructs a new instance of arguments of effects.
      *
      * @param arguments The provided arguments
      */
-    public ArgumentsEffect(String arguments) {
+    public ArgumentsEffect(String arguments, ArgumentsConfiguration configuration) {
         String[] split = arguments.split(DELIMITER_WHITESPACE);
         this.arguments = new LinkedList<>(Arrays.asList(split));
+        this.configuration = configuration;
     }
 
     private String retrieveArgument() throws InvalidArgumentException {
@@ -192,12 +198,16 @@ public class ArgumentsEffect {
                 throw new InvalidArgumentException(ERROR_MESSAGE_NEG_RANDOM_COUNT_NUMBER.formatted(argument));
             }
 
+            if (min > max) {
+                throw new InvalidArgumentException(ERROR_MESSAGE_RANDOM_INTERVAL_INVALID);
+            }
+
             return new Count(min, max);
         }
 
         int value;
         try {
-            value = Integer.parseInt(retrieveArgument());
+            value = Integer.parseInt(argument);
         } catch (NumberFormatException e) {
             throw new InvalidArgumentException(ERROR_MESSAGE_NEG_COUNT_NUMBER.formatted(argument));
         }
@@ -223,5 +233,14 @@ public class ArgumentsEffect {
         }
 
         return value;
+    }
+
+    /**
+     * Parses a list of effects for the repeat effect, if found.
+     * @return The list of effects to be repeated
+     * @throws InvalidArgumentException if parsing fails
+     */
+    public List<Effect> parseRepeatEffects() throws InvalidArgumentException {
+        return this.configuration.parseRepeatEffects();
     }
 }
