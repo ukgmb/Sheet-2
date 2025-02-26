@@ -1,4 +1,6 @@
-package a1.view;
+package a1.view.commands;
+
+import a1.view.Result;
 
 /**
  * This interface represents a command that can be executed to handle the given value.

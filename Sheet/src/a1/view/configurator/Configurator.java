@@ -27,6 +27,7 @@ public class Configurator {
     private static final String SAME_MONSTER_NAME_ERROR = "all monsters must have different names. '%s' was used"
             + " multiple times.";
     private static final String WRONG_ORDER_ERROR = "actions have to be declared first, then monsters.";
+    private static final String ERROR_MESSAGE_TOO_MANY_ARGUMENTS = "provided too many arguments";
     private final Game game;
     private final List<Action> allDeclaredActions;
     private final Set<Monster> allDeclaredMonsters;
@@ -74,7 +75,7 @@ public class Configurator {
 
             if (keyword.requiresMoreLines()) {
                 while (iterator.hasNext()) {
-                    String line = iterator.next();
+                    String line = iterator.next().trim();
                     if (!line.equals(END_COMMAND_PREFIX.formatted(commandInput))) {
                         argumentsInput.add(line);
                         continue;
@@ -95,8 +96,8 @@ public class Configurator {
     private Result handleCommand(List<String> argumentsInput, ConfigKeyword keyword) {
         ArgumentsConfiguration arguments = new ArgumentsConfiguration(argumentsInput, this.allDeclaredActions);
 
-        try {
-            if (keyword == ConfigKeyword.ACTION) {
+        if (keyword == ConfigKeyword.ACTION) {
+            try {
                 if (this.allActionsDeclared) {
                     return Result.error(WRONG_ORDER_ERROR);
                 }
@@ -105,19 +106,27 @@ public class Configurator {
                     return Result.error(SAME_ACTION_NAME_ERROR.formatted(action.getName()));
                 }
                 this.allDeclaredActions.add(action);
+            } catch (InvalidArgumentException e) {
+                return Result.error(e.getMessage());
+            }
 
-            } else {
+        } else {
+            try {
                 Monster monster = ProviderMonster.MONSTER.provide(arguments);
                 if (sameNameMonster(monster)) {
                     return Result.error(SAME_MONSTER_NAME_ERROR.formatted(monster.getName()));
                 }
+                if (!arguments.isExhausted()) {
+                    return Result.error(ERROR_MESSAGE_TOO_MANY_ARGUMENTS);
+                }
                 this.allDeclaredMonsters.add(monster);
                 this.allActionsDeclared = true;
+            } catch (InvalidArgumentException e) {
+                return Result.error(e.getMessage());
             }
-            this.count.merge(keyword, 1, Integer::sum);
-        } catch (InvalidArgumentException e) {
-            return Result.error(e.getMessage());
         }
+        this.count.merge(keyword, 1, Integer::sum);
+
         return Result.success();
     }
 

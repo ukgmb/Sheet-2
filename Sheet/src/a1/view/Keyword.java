@@ -15,7 +15,7 @@ public interface Keyword<T, S> extends Provider<T, S> {
 
     /**
      * Returns whether the keyword matches the given input.
-     * @param input the input to be checked
+     * @param input the input to be matched
      * @return whether the keyword matches the input
      */
     boolean matches(String input);

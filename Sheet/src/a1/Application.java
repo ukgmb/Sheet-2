@@ -29,10 +29,12 @@ public final class Application {
             return;
         }
 
+
         Game game = new Game();
         UserInteraction userInteraction = new UserInteraction(System.in, System.out, System.err, game);
-        userInteraction.handleConfigFile(Path.of(args[0]));
-        userInteraction.handleUserInput();
+        if (userInteraction.handleConfigFile(Path.of(args[0]))) {
+            userInteraction.handleUserInput();
+        }
 
 
 

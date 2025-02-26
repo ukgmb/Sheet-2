@@ -33,4 +33,18 @@ public class Game {
     public void loadMonsters(Set<Monster> monsters) {
         this.allMonsters.addAll(monsters);
     }
+
+    /**
+     * Returns all the monsters with its stats as a string.
+     * @return All monsters with its stats.
+     */
+    public String showMonsters() {
+        StringBuilder builder = new StringBuilder();
+
+        for (Monster monster : this.allMonsters) {
+            builder.append(monster.getStats()).append(System.lineSeparator());
+        }
+
+        return builder.toString();
+    }
 }

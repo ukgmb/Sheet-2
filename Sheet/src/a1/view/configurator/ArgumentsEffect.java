@@ -35,7 +35,7 @@ public class ArgumentsEffect {
     private static final String ERROR_MESSAGE_RANDOM_INTERVAL_INVALID = "the interval for the random count is invalid."
             + "Min value is higher than max value";
 
-    private static final String DELIMITER_WHITESPACE = " ";
+    private static final String DELIMITER_WORD_SEPARATOR = " ";
 
     private static final int HIT_RATE_MINIMUM = 0;
     private static final int HIT_RATE_MAXIMUM = 100;
@@ -45,17 +45,18 @@ public class ArgumentsEffect {
 
     private final List<String> arguments;
 
-    private final ArgumentsConfiguration configuration;
+    private final ArgumentsConfiguration argumentsConfiguration;
 
     /**
      * Constructs a new instance of arguments of effects.
      *
      * @param arguments The provided arguments
+     * @param argumentsConfiguration Other arguments outside the effect declaration.
      */
-    public ArgumentsEffect(String arguments, ArgumentsConfiguration configuration) {
-        String[] split = arguments.split(DELIMITER_WHITESPACE);
+    public ArgumentsEffect(String arguments, ArgumentsConfiguration argumentsConfiguration) {
+        String[] split = arguments.split(DELIMITER_WORD_SEPARATOR);
         this.arguments = new LinkedList<>(Arrays.asList(split));
-        this.configuration = configuration;
+        this.argumentsConfiguration = argumentsConfiguration;
     }
 
     private String retrieveArgument() throws InvalidArgumentException {
@@ -241,6 +242,6 @@ public class ArgumentsEffect {
      * @throws InvalidArgumentException if parsing fails
      */
     public List<Effect> parseRepeatEffects() throws InvalidArgumentException {
-        return this.configuration.parseRepeatEffects();
+        return this.argumentsConfiguration.parseRepeatEffects();
     }
 }

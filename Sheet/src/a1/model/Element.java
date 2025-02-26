@@ -52,7 +52,4 @@ public enum Element {
         return PRINTABLE_NAME;
     }
 
-    public int getInt() {
-        return this.beatsElementOrdinal;
-    }
 }

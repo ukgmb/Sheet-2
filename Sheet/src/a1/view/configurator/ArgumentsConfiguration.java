@@ -3,13 +3,13 @@ package a1.view.configurator;
 import a1.model.Action;
 import a1.model.effects.Effect;
 import a1.model.Element;
-import a1.view.Command;
+import a1.view.commands.Command;
 import a1.view.InvalidArgumentException;
 
 import java.util.*;
 
 /**
- * This class represents the arguments of a {@link Command}.
+ * This class represents the arguments of a {@link ConfigKeyword}.
  *
  * @author ukgmb
  */
@@ -21,6 +21,7 @@ public class ArgumentsConfiguration {
             + " But provided %s";
     private static final String ERROR_MESSAGE_ACTION_NOT_DECLARED = "action %s wasn't declared before.";
     private static final String ERROR_MESSAGE_REPEAT_IN_REPEAT = "repeat inside another repeat effect isn't allowed";
+    private static final String ERROR_MESSAGE_TOO_MANY_ARGUMENTS = "provided too many arguments";
     private static final String DELIMITER_WHITESPACE = " ";
     private static final int MAXIMUM_NUMBER_OF_ACTIONS_FOR_MONSTERS = 4;
     private static final int ACTION_COUNT_START_VALUE = 0;
@@ -113,6 +114,9 @@ public class ArgumentsConfiguration {
             ArgumentsEffect argumentsEffect = new ArgumentsEffect(split[1], this);
             KeywordEffect keyword = retrieveEffectKeyword(effect);
             list.add(keyword.provide(argumentsEffect));
+            if (!argumentsEffect.isExhausted()) {
+                throw new InvalidArgumentException(ERROR_MESSAGE_TOO_MANY_ARGUMENTS);
+            }
         }
         return list;
 
