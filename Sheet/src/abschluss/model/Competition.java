@@ -118,4 +118,34 @@ public class Competition {
         }
         return null;
     }
+
+    private void nextPhase() {
+        int ordinal = (this.phase.ordinal() + 1) % CompetitionPhases.values().length;
+        this.phase = CompetitionPhases.values()[ordinal];
+    }
+
+    /**
+     * Evaluates the action command.
+     */
+    protected void action() {
+        // Queses action
+
+        nextMonstersTurn();
+        if (this.allMonsters.get(0) == this.current) {
+            nextPhase();
+        }
+    }
+
+    private void executePhaseII() {
+
+    }
+
+    /**
+     * Finds and returns the corresponding action of the current monster.
+     * @param actionName Name of the action
+     * @return The found action. Else, returns {@code null}
+     */
+    protected Action getAction(String actionName) {
+        return this.current.getAction(actionName);
+    }
 }

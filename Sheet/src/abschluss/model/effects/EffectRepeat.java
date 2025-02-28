@@ -1,6 +1,7 @@
 package abschluss.model.effects;
 
 import abschluss.model.Monster;
+import abschluss.model.RandomGenerator;
 
 import java.util.List;
 
@@ -26,7 +27,17 @@ public class EffectRepeat extends Effect {
     }
 
     @Override
-    public boolean executeEffect() {
+    public boolean needsOpponent() {
+        for (Effect effect : this.effects) {
+            if (effect.needsOpponent()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean executeEffect(RandomGenerator random) {
         return true;
     }
 

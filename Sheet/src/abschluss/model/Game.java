@@ -21,15 +21,17 @@ public class Game {
     private final Set<Monster> allMonsters;
     private Competition competition;
     private final UserInteraction handler;
+    private final RandomGenerator randomGenerator;
 
     /**
      * Constructs a new game instance.
      * @param handler The user interaction that handles this game
      */
-    public Game(UserInteraction handler) {
+    public Game(UserInteraction handler, RandomGenerator randomGenerator) {
         this.allMonsters = new LinkedHashSet<>();
         this.competition = null;
         this.handler = handler;
+        this.randomGenerator = randomGenerator;
     }
 
     /**
@@ -130,4 +132,26 @@ public class Game {
         }
         return this.competition.whatMonsterShouldDo();
     }
+
+    /**
+     * Returns the action, from the current monster in competition.
+     * @param actionName Name of the action
+     * @return Corresponding action, if found. Else, returns {@code null}
+     */
+    public Action getAction(String actionName) {
+        return this.competition.getAction(actionName);
+    }
+
+    /**
+     * Returns whether a competition is running or not.
+     * @return {@code true}, if competition is running. Else, returns {@code false}
+     */
+    public boolean competitionIsRunning() {
+        return this.competition != null;
+    }
+
+    /**
+     * Searches for the target monster in the competition.
+     * @return Target monster if possible. Else, returns {@code null}
+     */
 }

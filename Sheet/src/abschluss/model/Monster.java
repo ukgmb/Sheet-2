@@ -243,10 +243,64 @@ public class Monster {
     }
 
     /**
-     * Returns the element of the monster.
-     * @return The element of the monster.
+     * Returns the element.
+     * @return The element
      */
     public Element getElement() {
         return element;
+    }
+
+    /**
+     * Returns the attack rate.
+     * @return The attack rate
+     */
+    public int getAttackRate() {
+        return attackRate;
+    }
+
+    /**
+     * Returns the defence rate.
+     * @return The defence rate
+     */
+    public int getDefenceRate() {
+        return defenceRate;
+    }
+
+    /**
+     * Returns the speed.
+     * @return The speed
+     */
+    public int getSpeedRate() {
+        return speedRate;
+    }
+
+    /**
+     * Returns the precision rate.
+     * @return Precision rate
+     */
+    public int getPrecisionRate() {
+        return precisionRate;
+    }
+
+    /**
+     * Returns the agility rate.
+     * @return Agility rate
+     */
+    public int getAgilityRate() {
+        return agilityRate;
+    }
+
+    /**
+     * Finds and returns the corresponding action.
+     * @param actionName Name of the action
+     * @return The found action. Else, returns {@code null}
+     */
+    protected Action getAction(String actionName) {
+        for (Action action : this.actions) {
+            if (action.getName().equals(actionName)) {
+                return action;
+            }
+        }
+        return null;
     }
 }

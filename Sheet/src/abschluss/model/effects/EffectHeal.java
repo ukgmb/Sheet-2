@@ -1,6 +1,7 @@
 package abschluss.model.effects;
 
 import abschluss.model.Monster;
+import abschluss.model.RandomGenerator;
 
 /**
  * Represents the heal effect which heals the targeted monster.
@@ -26,7 +27,12 @@ public class EffectHeal extends Effect {
     }
 
     @Override
-    public boolean executeEffect() {
+    public boolean needsOpponent() {
+        return this.target == TargetMonster.TARGET;
+    }
+
+    @Override
+    public boolean executeEffect(RandomGenerator random) {
         return true;
     }
 

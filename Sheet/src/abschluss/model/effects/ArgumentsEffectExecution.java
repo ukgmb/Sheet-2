@@ -32,7 +32,7 @@ public class ArgumentsEffectExecution {
      * @param target Type of target expected (see {@link TargetMonster}
      * @return Target monster
      */
-    protected Monster getTarget(TargetMonster target) {
+    protected Monster getTargetMonster(TargetMonster target) {
         if (target == TargetMonster.TARGET) {
             return this.target;
         }
@@ -47,4 +47,11 @@ public class ArgumentsEffectExecution {
         return this.action.getElement();
     }
 
+    /**
+     * Returns the user monster.
+     * @return User monster
+     */
+    public Monster getUserMonster() {
+        return user;
+    }
 }

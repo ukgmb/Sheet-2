@@ -1,6 +1,7 @@
 package abschluss.model.effects;
 
 import abschluss.model.Monster;
+import abschluss.model.RandomGenerator;
 
 /**
  * Represents the stat protect effect which either protects the health or the stats of a monster.
@@ -26,7 +27,12 @@ public class EffectStatProtect extends Effect {
     }
 
     @Override
-    public boolean executeEffect() {
+    public boolean needsOpponent() {
+        return false;
+    }
+
+    @Override
+    public boolean executeEffect(RandomGenerator random) {
         return true;
     }
 

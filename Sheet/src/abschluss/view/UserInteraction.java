@@ -1,6 +1,7 @@
 package abschluss.view;
 
 import abschluss.model.Game;
+import abschluss.model.RandomGenerator;
 import abschluss.view.commands.ArgumentsCommand;
 import abschluss.view.commands.KeywordGame;
 import abschluss.view.commands.KeywordUserInteraction;
@@ -12,11 +13,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class which handles the user's input and application's output.
@@ -40,6 +37,7 @@ public class UserInteraction {
     private boolean isRunning;
 
     private final Scanner scanner;
+    private final RandomGenerator random;
 
 
     /**
@@ -55,6 +53,7 @@ public class UserInteraction {
         this.errorStream = errorStream;
         this.isRunning = true;
         this.scanner = new Scanner(inputSource);
+        this.random = new RandomGenerator(new Random());
     }
 
 

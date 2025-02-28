@@ -1,5 +1,6 @@
 package abschluss.view.commands;
 
+import abschluss.model.Action;
 import abschluss.model.Game;
 import abschluss.model.Monster;
 import abschluss.view.InvalidArgumentException;
@@ -22,6 +23,8 @@ public class ArgumentsCommand {
     private static final String ERROR_MESSAGE_MONSTER_NOT_FOUND = "monster '%s' wasn't declared.";
     private static final String ERROR_MESSAGE_MINIMUM_2_MONSTERS = "min 2 monsters are required to start a new "
             + "competition.";
+    private static final String ERROR_MESSAGE_COMPETITION_NOT_STARTED = "competition hasn't started yet.";
+    private static final String ERROR_MESSAGE_ACTION_NOT_FOUND = "action '%s' was not found.";
     private static final int MINIMUM_FOR_COMPETITION = 2;
 
     private static final String DELIMITER_WORD_SEPARATOR = " ";
@@ -66,7 +69,7 @@ public class ArgumentsCommand {
      * @return The path of the file, if found
      * @throws InvalidArgumentException is parsing fails
      */
-    public Path parsePath() throws InvalidArgumentException {
+    protected Path parsePath() throws InvalidArgumentException {
         return Path.of(retrieveArgument());
     }
 
@@ -75,7 +78,7 @@ public class ArgumentsCommand {
      * @return The parameter, if found. If no parameter was given, returns {@code null}
      * @throws InvalidArgumentException if parsing fails
      */
-    public ShowParameter parseParameter() throws InvalidArgumentException {
+    protected ShowParameter parseParameter() throws InvalidArgumentException {
         if (isExhausted()) {
             return null;
         }
@@ -95,7 +98,7 @@ public class ArgumentsCommand {
      * @return List of monsters, if all found
      * @throws InvalidArgumentException if parsing fails
      */
-    public List<Monster> parseParticipants() throws InvalidArgumentException {
+    protected List<Monster> parseParticipants() throws InvalidArgumentException {
         if (this.arguments.size() < MINIMUM_FOR_COMPETITION) {
             throw new InvalidArgumentException(ERROR_MESSAGE_MINIMUM_2_MONSTERS);
         }
@@ -109,6 +112,35 @@ public class ArgumentsCommand {
             list.add(representation);
         }
         return list;
+    }
+
+    /**
+     * Parses the action to be played by the current monster in the competition.
+     * @return The action to be played
+     * @throws InvalidArgumentException if parsing fails
+     */
+    protected Action parseAction() throws InvalidArgumentException {
+        if (!this.game.competitionIsRunning()) {
+            throw new InvalidArgumentException(ERROR_MESSAGE_COMPETITION_NOT_STARTED);
+        }
+        String argument = retrieveArgument();
+        Action action = this.game.getAction(argument);
+
+        if (action == null) {
+            throw new InvalidArgumentException(ERROR_MESSAGE_ACTION_NOT_FOUND.formatted(argument));
+        }
+        return action;
+    }
+
+    /**
+     * Parses the target monster of the action. Doesn't always require user's input.
+     * @return The target monster, if possible
+     * @throws InvalidArgumentException if parsing fails
+     */
+    protected Monster parseMonster(Action action) throws InvalidArgumentException {
+        if (isExhausted() && action.needsOpponent()) {
+
+        }
     }
 
 }

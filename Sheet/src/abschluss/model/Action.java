@@ -83,4 +83,17 @@ public class Action {
     public Element getElement() {
         return element;
     }
+
+    /**
+     * Checks whether the action needs an opponent to be played.
+     * @return {@code true}, if opponent is needed. Else, returns {@code false}
+     */
+    public boolean needsOpponent() {
+        for (Effect effect : this.effects) {
+            if (effect.needsOpponent()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

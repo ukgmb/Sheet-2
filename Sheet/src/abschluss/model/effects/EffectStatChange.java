@@ -1,6 +1,7 @@
 package abschluss.model.effects;
 
 import abschluss.model.Monster;
+import abschluss.model.RandomGenerator;
 
 /**
  * Represents the stat change effect which changes one stat of the target monster.
@@ -29,7 +30,12 @@ public class EffectStatChange extends Effect {
     }
 
     @Override
-    public boolean executeEffect() {
+    public boolean needsOpponent() {
+        return this.target == TargetMonster.TARGET;
+    }
+
+    @Override
+    public boolean executeEffect(RandomGenerator random) {
         return true;
     }
 

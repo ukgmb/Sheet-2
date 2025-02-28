@@ -2,6 +2,7 @@ package abschluss.model.effects;
 
 import abschluss.model.Element;
 import abschluss.model.Monster;
+import abschluss.model.RandomGenerator;
 
 /**
  * Represents the damage effect which damages the targeted monster.
@@ -10,10 +11,19 @@ import abschluss.model.Monster;
  */
 public class EffectDamage extends Effect {
 
-    private static final int DIVIDER_PER_CENT = 100;
+    private static final double PER_CENT_FACTOR = 100;
     private static final double ACTION_ELEMENT_EFFECTIVE_FACTOR = 2;
     private static final double ACTION_ELEMENT_NOT_EFFECTIVE_FACTOR = 0.5;
-    private static final int NON_ELEMENT_EFFECTIVE_FACTOR = 1;
+    private static final double NON_ELEMENT_EFFECTIVE_FACTOR = 1;
+    private static final double DIRECT_HIT_FACTOR_BASE = 10;
+    private static final double NEGATIVE_FAC = -1;
+    private static final double DIRECT_HIT_FACTOR = 2;
+    private static final double NOT_DIRECT_HIT_FACTOR = 1;
+    private static final double SAME_ELEMENT_FACTOR = 1.5;
+    private static final double NOT_SAME_ELEMENT_FACTOR = 1;
+    private static final double RANDOM_FACTOR_MIN = 0.85;
+    private static final double RANDOM_FACTOR_MAX = 1;
+    private static final double NORMALIZATION_FACTOR = 1.0 / 3.0;
 
     private final TargetMonster target;
     private final Strength strength;
@@ -32,30 +42,54 @@ public class EffectDamage extends Effect {
     }
 
     @Override
-    public boolean executeEffect() {
-        Monster target = this.arguments.getTarget(this.target);
+    public boolean needsOpponent() {
+        return this.target == TargetMonster.TARGET;
+    }
 
-        switch (this.strength.getStrengthType()) {
+    @Override
+    public boolean executeEffect(RandomGenerator random) {
+        Monster target = this.arguments.getTargetMonster(this.target);
 
-            case ABS: target.damage(this.strength.getValue());
-            break;
-            case REL: target.damage(relativeDamage(target));
-            break;
-            case BASE:
+        if (hit(target, random)) {
+            switch (this.strength.getStrengthType()) {
+
+                case ABS: target.damage(this.strength.getValue());
+                    break;
+                case REL: target.damage(relativeDamage(target));
+                    break;
+                case BASE: target.damage(baseDamage(target, random));
+                default:
+            }
+            return true;
         }
+        return false;
+    }
+
+    private boolean hit(Monster target, RandomGenerator random) {
+        if (target == this.arguments.getUserMonster()) {
+            return random.outcomeOf(this.hitRate * this.arguments.getUserMonster().getPrecisionRate());
+        }
+        return random.outcomeOf(this.hitRate * (double) (this.arguments.getUserMonster().getPrecisionRate()
+                / target.getAgilityRate()));
     }
 
     private int relativeDamage(Monster target) {
-        double percentage = (double) this.strength.getValue() / DIVIDER_PER_CENT;
+        double percentage = (double) this.strength.getValue() / PER_CENT_FACTOR;
         return (int) Math.ceil(percentage * target.getMaxHitPoints());
     }
 
-    private int baseDamage(Monster target) {
-        double damage = this.strength.getValue();
+    private int baseDamage(Monster target, RandomGenerator random) {
+
         double elementFactor = elementFactor(target);
+        double statusFactor = ((double) this.arguments.getUserMonster().getAttackRate() / target.getDefenceRate());
+        double directHitFactor = directHitFactor(target, random);
+        double sameElementFactor = sameElementFactor();
+        double randomFactor = random.getRandomDouble(RANDOM_FACTOR_MIN, RANDOM_FACTOR_MAX);
 
+        double damage = this.strength.getValue() * elementFactor * statusFactor * directHitFactor * sameElementFactor
+                * randomFactor * NORMALIZATION_FACTOR;
 
-        return (int) damage;
+        return (int) Math.ceil(damage);
     }
 
     private double elementFactor(Monster target) {
@@ -69,6 +103,24 @@ public class EffectDamage extends Effect {
             return ACTION_ELEMENT_NOT_EFFECTIVE_FACTOR;
         }
         return NON_ELEMENT_EFFECTIVE_FACTOR;
+    }
+
+    private double directHitFactor(Monster target, RandomGenerator random) {
+        double probability = Math.pow(DIRECT_HIT_FACTOR_BASE, NEGATIVE_FAC
+                * (double) (this.arguments.getUserMonster().getSpeedRate() / target.getSpeedRate()))
+                * PER_CENT_FACTOR;
+
+        if (random.outcomeOf(probability)) {
+            return DIRECT_HIT_FACTOR;
+        }
+        return NOT_DIRECT_HIT_FACTOR;
+    }
+
+    private double sameElementFactor() {
+        if (this.arguments.getUserMonster().getElement() == this.arguments.getActionElement()) {
+            return SAME_ELEMENT_FACTOR;
+        }
+        return NOT_SAME_ELEMENT_FACTOR;
     }
 
     /**

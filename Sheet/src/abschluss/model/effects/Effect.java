@@ -1,5 +1,7 @@
 package abschluss.model.effects;
 
+import abschluss.model.RandomGenerator;
+
 /**
  * Represents an effect in an {@code Action}. Implemented effects can be directly executed using
  * {@link #executeEffect}.
@@ -19,9 +21,10 @@ public abstract class Effect {
 
     /**
      * Executes the effect.
+     * @param random The random generator used to determine some calculations.
      * @return {@code true}, if effect was hit. Else, returns {@code false}.
      */
-    public abstract boolean executeEffect();
+    public abstract boolean executeEffect(RandomGenerator random);
 
     /**
      * Returns the damage the effect does.
@@ -34,6 +37,12 @@ public abstract class Effect {
      * @return THe hit rate
      */
     public abstract int getHitRate();
+
+    /**
+     * Effect needs opponent.
+     * @return {@code true}, if needed. Else, returns {@code false}
+     */
+    public abstract boolean needsOpponent();
 
     /**
      * Gives the effect the arguments, which are later necessary to execute the effect.
