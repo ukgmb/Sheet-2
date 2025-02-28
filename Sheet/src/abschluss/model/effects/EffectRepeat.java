@@ -10,6 +10,7 @@ import java.util.List;
  * @author ukgmb
  */
 public class EffectRepeat implements Effect {
+    private static final int FIRST_EFFECT_INDEX = 0;
 
     private final Count count;
     private final List<Effect> effects;
@@ -27,5 +28,15 @@ public class EffectRepeat implements Effect {
     @Override
     public boolean executeEffect(Monster... monsters) {
         return true;
+    }
+
+    @Override
+    public Strength getDamage() {
+        return null;
+    }
+
+    @Override
+    public int getHitRate() {
+        return this.effects.get(FIRST_EFFECT_INDEX).getHitRate();
     }
 }

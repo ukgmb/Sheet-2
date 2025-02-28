@@ -16,4 +16,16 @@ public interface Effect {
      * @return {@code true}, if effect was hit. Else, returns {@code false}.
      */
     boolean executeEffect(Monster... monsters);
+
+    /**
+     * Returns the damage the effect does.
+     * @return If effect is damage, then return damage. Else, returns {@code null}
+     */
+    Strength getDamage();
+
+    /**
+     * Returns the hit rate.
+     * @return THe hit rate
+     */
+    int getHitRate();
 }

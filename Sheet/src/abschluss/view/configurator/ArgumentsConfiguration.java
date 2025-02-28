@@ -7,7 +7,7 @@ import abschluss.view.InvalidArgumentException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +25,8 @@ public class ArgumentsConfiguration {
     private static final String ERROR_MESSAGE_ACTION_NOT_DECLARED = "action %s wasn't declared before.";
     private static final String ERROR_MESSAGE_REPEAT_IN_REPEAT = "repeat inside another repeat effect isn't allowed";
     private static final String ERROR_MESSAGE_TOO_MANY_ARGUMENTS = "provided too many arguments";
+    private static final String ERROR_MESSAGE_SAME_ACTION_FOR_MONSTER = "usage of action '%s' multiple times "
+            + "is not allowed.";
     private static final String DELIMITER_WHITESPACE = " ";
     private static final int MAXIMUM_NUMBER_OF_ACTIONS_FOR_MONSTERS = 4;
     private static final int ACTION_COUNT_START_VALUE = 0;
@@ -166,7 +168,7 @@ public class ArgumentsConfiguration {
         if (lineIsExhausted()) {
             throw new InvalidArgumentException(ERROR_MESSAGE_TOO_FEW_ARGUMENTS);
         }
-        Set<Action> actions = new HashSet<>();
+        Set<Action> actions = new LinkedHashSet<>();
         int count = ACTION_COUNT_START_VALUE;
         while (!lineIsExhausted() && count < MAXIMUM_NUMBER_OF_ACTIONS_FOR_MONSTERS) {
             String argument = retrieveArgument();
@@ -174,7 +176,9 @@ public class ArgumentsConfiguration {
             if (retrieved == null) {
                 throw new InvalidArgumentException(ERROR_MESSAGE_ACTION_NOT_DECLARED.formatted(argument));
             }
-            actions.add(retrieved);
+            if (!actions.add(retrieved)) {
+                throw new InvalidArgumentException(ERROR_MESSAGE_SAME_ACTION_FOR_MONSTER.formatted(argument));
+            }
             count++;
         }
 

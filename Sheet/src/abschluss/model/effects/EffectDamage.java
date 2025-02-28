@@ -29,4 +29,22 @@ public class EffectDamage implements Effect {
     public boolean executeEffect(Monster... monsters) {
         return true;
     }
+
+    /**
+     * Returns the strength of the damage effect.
+     * @return THe strength of the damage effect
+     */
+    public Strength getStrength() {
+        return strength;
+    }
+
+    @Override
+    public Strength getDamage() {
+        return this.strength;
+    }
+
+    @Override
+    public int getHitRate() {
+        return this.hitRate;
+    }
 }

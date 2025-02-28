@@ -1,6 +1,11 @@
 package abschluss.model;
 
-import java.util.*;
+import abschluss.view.UserInteraction;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class handles a competition between {@link Monster}.
@@ -13,18 +18,21 @@ public class Competition {
     private static final int FIRST_MONSTER_TURN_INDEX = 0;
     private static final String MARKING_CURRENT_MONSTER = "*";
     private static final String MARKING_NOT_CURRENT_MONSTER = "";
+    private static final String MONSTER_TURN_DEMANDS_ACTION = "What should %s do ?";
 
     private final List<Monster> allMonsters;
     private Map<Monster, Integer> countOfMonsters;
     private Map<Monster, Integer> maxNumOfMonster;
 
     private Monster current; //The monster who is currently at turn
+    private CompetitionPhases phase;
+    private final UserInteraction handler;
 
     /**
      * Constructs a new competition with given monsters.
      * @param allMonsters List of monsters to participate in the competition
      */
-    protected Competition(List<Monster> allMonsters) {
+    protected Competition(List<Monster> allMonsters, UserInteraction handler) {
         countMonsters(allMonsters);
         this.allMonsters = new ArrayList<>();
         for (Monster monster : allMonsters) {
@@ -37,6 +45,8 @@ public class Competition {
             }
         }
         this.current = this.allMonsters.get(FIRST_MONSTER_TURN_INDEX);
+        this.handler = handler;
+        this.phase = CompetitionPhases.PHASE_1;
     }
 
     private void countMonsters(List<Monster> monstersAlive) {
@@ -70,5 +80,42 @@ public class Competition {
         }
 
         return builder.toString();
+    }
+
+    /**
+     * Shows every action of the current monster in a string.
+     * @return The string containing all the information
+     */
+    protected String showActions() {
+        return this.current.showActions();
+    }
+
+    /**
+     * Returns the stats of the current monster.
+     * @return The stats of the current monster
+     */
+    protected String showStats() {
+        return this.current.showStats();
+    }
+
+    /**
+     * Next monster in the list is at turn in a competition.
+     * @return always returns true
+     */
+    protected boolean nextMonstersTurn() {
+        int index = (this.allMonsters.indexOf(this.current) + 1) % this.allMonsters.size();
+        this.current = this.allMonsters.get(index);
+        return true;
+    }
+
+    /**
+     * If competition is in phase 1 of a round. Message to the user is given to enter the action.
+     * @return The message
+     */
+    protected String whatMonsterShouldDo() {
+        if (this.phase == CompetitionPhases.PHASE_1) {
+            return MONSTER_TURN_DEMANDS_ACTION.formatted(this.current.getName());
+        }
+        return null;
     }
 }

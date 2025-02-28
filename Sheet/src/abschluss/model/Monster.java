@@ -23,6 +23,7 @@ public class Monster {
     private static final String FAINTED_CONDITION = "FAINTED";
     private static final int HP_NEEDED_FOR_FAINTED = 0;
     private static final String CURRENT_CONDITION_FORMAT = "(%s)";
+
     private static final String HEALTH_BAR_DELIMITER = "";
     private static final String HEALTH_BAR_PREFIX = "[";
     private static final String HEALTH_BAR_SUFFIX = "]";
@@ -32,6 +33,11 @@ public class Monster {
     private static final String ARGUMENT_SEPARATOR = " ";
     private static final String PLACEHOLDER_STATUS = "%s"; //Placeholder to get filled later by competition class.
 
+    private static final String SHOW_ACTIONS_MONSTER_NAME = "ACTIONS OF %s";
+
+    private static final String SHOW_STATS_MONSTER_NAME = "STATS OF %s";
+    private static final String SHOW_STATS_HEALTH_SEPARATOR = "/";
+
     private String name;
 
     private final int maxHitPoints;
@@ -40,7 +46,7 @@ public class Monster {
     private final int attackRate;
     private final int defenceRate;
     private final int speedRate;
-    private final int precision;
+    private final int precisionRate;
     private final int agilityRate;
 
     private final Element element;
@@ -49,13 +55,14 @@ public class Monster {
 
     /**
      * Constructs a new monster. Declaration of HitPoints, AttackRate, DefenceRate and SpeedRate are required.
-     * @param name Name of the monster
-     * @param element Element of the monster
-     * @param hitPoints Hit points
-     * @param attackRate Rate of attack
+     *
+     * @param name        Name of the monster
+     * @param element     Element of the monster
+     * @param hitPoints   Hit points
+     * @param attackRate  Rate of attack
      * @param defenceRate Rate of defence
-     * @param speedRate Rate of speed
-     * @param actions All the actions the monster can do (max 4 actions allowed)
+     * @param speedRate   Rate of speed
+     * @param actions     All the actions the monster can do (max 4 actions allowed)
      */
     public Monster(String name, Element element, int hitPoints, int attackRate, int defenceRate, int speedRate,
                    Set<Action> actions) {
@@ -67,17 +74,18 @@ public class Monster {
         this.attackRate = attackRate;
         this.defenceRate = defenceRate;
         this.speedRate = speedRate;
-        this.precision = DEFAULT_PRECISION_RATE;
+        this.precisionRate = DEFAULT_PRECISION_RATE;
         this.agilityRate = DEFAULT_AGILITY_RATE;
 
         this.element = element;
-        this.actions = Set.copyOf(actions);
+        this.actions = actions;
         this.condition = StatusCondition.OK;
 
     }
 
     /**
      * A copy constructor to copy a monster.
+     *
      * @param monster The monster to be copied
      */
     public Monster(Monster monster) {
@@ -90,15 +98,16 @@ public class Monster {
         this.defenceRate = monster.defenceRate;
         this.speedRate = monster.speedRate;
         this.agilityRate = monster.agilityRate;
-        this.precision = monster.precision;
+        this.precisionRate = monster.precisionRate;
 
         this.element = monster.element;
-        this.actions = Set.copyOf(monster.actions);
+        this.actions = monster.actions;
         this.condition = monster.condition;
     }
 
     /**
      * Returns the name of the monster.
+     *
      * @return The name of the monster.
      */
     public String getName() {
@@ -107,13 +116,14 @@ public class Monster {
 
     /**
      * Returns the monster stats(Element, HP, ATK, DEF, SPD).
+     *
      * @return Stats of the monster
      */
     public String getStats() {
         StringJoiner joiner = new StringJoiner(STATS_SEPARATOR, this.name + NAME_STATS_SEPARATOR, EMPTY_SUFFIX);
 
         joiner.add(Element.class.getSimpleName() + STAT_VALUE_SEPARATOR + this.element.name());
-        joiner.add(SHORT_HIT_POINTS  +  STAT_VALUE_SEPARATOR + this.hitPoints);
+        joiner.add(SHORT_HIT_POINTS + STAT_VALUE_SEPARATOR + this.hitPoints);
         joiner.add(Stat.ATK.name() + STAT_VALUE_SEPARATOR + this.attackRate);
         joiner.add(Stat.DEF.name() + STAT_VALUE_SEPARATOR + this.defenceRate);
         joiner.add(Stat.SPD.name() + STAT_VALUE_SEPARATOR + this.speedRate);
@@ -123,6 +133,7 @@ public class Monster {
 
     /**
      * Adds a String value to the monsters name.
+     *
      * @param suffix Suffix to be added to name
      */
     public void addNameSuffix(String suffix) {
@@ -131,6 +142,7 @@ public class Monster {
 
     /**
      * Constructs a String that shows the monsters current status during competition.
+     *
      * @return The string showing the monsters current status during competition
      */
     public String getStatus() {
@@ -172,7 +184,42 @@ public class Monster {
         return this.hitPoints == HP_NEEDED_FOR_FAINTED;
     }
 
+    /**
+     * Constructs a string which shows the current monster's actions.
+     *
+     * @return The string containing all the information
+     */
+    protected String showActions() {
+        StringBuilder builder = new StringBuilder();
 
+        builder.append(SHOW_ACTIONS_MONSTER_NAME.formatted(this.name)).append(System.lineSeparator());
+        for (Action action : this.actions) {
+            builder.append(action.getInfo()).append(System.lineSeparator());
+        }
 
+        return builder.toString();
+    }
+
+    /**
+     * Constructs a string showing the current stats of the monster.
+     *
+     * @return The string containing the information
+     */
+    protected String showStats() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(SHOW_STATS_MONSTER_NAME.formatted(this.name)).append(System.lineSeparator());
+
+        StringJoiner joiner = new StringJoiner(STATS_SEPARATOR);
+        joiner.add(SHORT_HIT_POINTS + STAT_VALUE_SEPARATOR + this.hitPoints + SHOW_STATS_HEALTH_SEPARATOR
+                + this.maxHitPoints);
+        joiner.add(Stat.ATK.name() + STAT_VALUE_SEPARATOR + this.attackRate);
+        joiner.add(Stat.DEF.name() + STAT_VALUE_SEPARATOR + this.defenceRate);
+        joiner.add(Stat.SPD.name() + STAT_VALUE_SEPARATOR + this.speedRate);
+        joiner.add(Stat.PRC.name() + STAT_VALUE_SEPARATOR + this.precisionRate);
+        joiner.add(Stat.AGL.name() + STAT_VALUE_SEPARATOR + this.agilityRate);
+
+        builder.append(joiner.toString());
+        return builder.toString();
+    }
 
 }

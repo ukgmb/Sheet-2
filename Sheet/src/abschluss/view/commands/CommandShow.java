@@ -25,14 +25,23 @@ public class CommandShow implements Command<Game> {
     @Override
     public Result execute(Game handle) {
         if (this.parameter == null) {
-            String result = handle.show();
-            return result == null ? Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED) : Result.success(result);
+            String resultShow = handle.show();
+            return resultShow == null ? Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED)
+                    : Result.success(resultShow);
         }
 
         return switch (this.parameter) {
-
+            case ACTIONS -> {
+                String resultActions = handle.showActions();
+                yield resultActions == null ? Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED)
+                        : Result.success(resultActions);
+            }
             case MONSTERS -> Result.success(handle.showMonsters());
-            case ACTIONS ->  Result.error("Not declared yet");
+            case STATS -> {
+                String resultStats = handle.showStats();
+                yield resultStats == null ? Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED)
+                        : Result.success(resultStats);
+            }
         };
 
     }

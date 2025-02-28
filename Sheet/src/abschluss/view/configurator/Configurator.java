@@ -9,8 +9,8 @@ import abschluss.view.ResultType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +37,6 @@ public class Configurator {
             + " multiple times.";
     private static final String WRONG_ORDER_ERROR = "actions have to be declared first, then monsters.";
     private static final String ERROR_MESSAGE_TOO_MANY_ARGUMENTS = "provided too many arguments";
-    private final Game game;
     private final List<Action> allDeclaredActions;
     private final Set<Monster> allDeclaredMonsters;
     private final List<String> allLines;
@@ -47,13 +46,11 @@ public class Configurator {
     /**
      * Constructs a new configurator.
      *
-     * @param game     The game in which the configuration should be loaded
      * @param allLines All the lines of the configuration file
      */
-    public Configurator(Game game, List<String> allLines) {
-        this.game = game;
+    public Configurator(List<String> allLines) {
         this.allDeclaredActions = new ArrayList<>();
-        this.allDeclaredMonsters = new HashSet<>();
+        this.allDeclaredMonsters = new LinkedHashSet<>();
         this.allLines = allLines;
         this.count = new HashMap<>();
         this.allActionsDeclared = false;
@@ -93,9 +90,9 @@ public class Configurator {
                 }
             }
 
-            Result handling = handleCommand(argumentsInput, keyword);
-            if (handling.getType() == ResultType.FAILURE) {
-                return handling;
+            Result result = handleCommand(argumentsInput, keyword);
+            if (result.getType() == ResultType.FAILURE) {
+                return result;
             }
 
         }
@@ -187,9 +184,10 @@ public class Configurator {
 
     /**
      * Loads the configuration into the game.
+     * @param game The game to be loaded
      */
-    public void loadConfiguration() {
-        this.game.loadMonsters(this.allDeclaredMonsters);
+    public void loadConfiguration(Game game) {
+        game.loadMonsters(this.allDeclaredMonsters);
     }
 
 }

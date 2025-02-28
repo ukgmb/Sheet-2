@@ -1,6 +1,5 @@
 package abschluss;
 
-import abschluss.model.Game;
 import abschluss.view.UserInteraction;
 
 import java.nio.file.Path;
@@ -29,8 +28,7 @@ public final class Application {
         }
 
 
-        Game game = new Game();
-        UserInteraction userInteraction = new UserInteraction(System.in, System.out, System.err, game);
+        UserInteraction userInteraction = new UserInteraction(System.in, System.out, System.err);
         if (userInteraction.handleConfigFile(Path.of(args[0]))) {
             userInteraction.handleUserInput();
         }

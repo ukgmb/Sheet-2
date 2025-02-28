@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
@@ -35,11 +34,12 @@ public class UserInteraction {
 
     private final Set<KeywordUserInteraction> keywordsUI = EnumSet.allOf(KeywordUserInteraction.class);
     private final Set<KeywordGame> keywordsGame = EnumSet.allOf(KeywordGame.class);
-    private final InputStream inputSource;
     private final PrintStream defaultStream;
     private final PrintStream errorStream;
-    private final Game game;
+    private Game game;
     private boolean isRunning;
+
+    private final Scanner scanner;
 
 
     /**
@@ -49,14 +49,12 @@ public class UserInteraction {
      * @param inputSource   Input source used to receive user's input
      * @param defaultStream Default print stream used to print results of application
      * @param errorStream   Error Stream used to print error messages
-     * @param game          The current game playing
      */
-    public UserInteraction(InputStream inputSource, PrintStream defaultStream, PrintStream errorStream, Game game) {
-        this.inputSource = inputSource;
+    public UserInteraction(InputStream inputSource, PrintStream defaultStream, PrintStream errorStream) {
         this.defaultStream = defaultStream;
         this.errorStream = errorStream;
-        this.game = game;
         this.isRunning = true;
+        this.scanner = new Scanner(inputSource);
     }
 
 
@@ -76,7 +74,7 @@ public class UserInteraction {
             return false;
         }
 
-        final Configurator configurator = new Configurator(this.game, allLines);
+        final Configurator configurator = new Configurator(allLines);
 
         Result result = configurator.readLines();
         if (result.getType() == ResultType.FAILURE) {
@@ -90,7 +88,8 @@ public class UserInteraction {
             this.defaultStream.println();
             this.defaultStream.println(configurator.getDeclarationCount());
             this.defaultStream.println();
-            configurator.loadConfiguration();
+            this.game = new Game(this);
+            configurator.loadConfiguration(this.game);
             return true;
         }
     }
@@ -101,11 +100,14 @@ public class UserInteraction {
      */
     public void handleUserInput() {
         this.isRunning = true;
-        try (Scanner scanner = new Scanner(this.inputSource)) {
-            while (this.isRunning && scanner.hasNextLine()) {
-                handleLine(scanner.nextLine());
+        while (this.isRunning && this.scanner.hasNextLine()) {
+            String instructions = this.game.getMessage();
+            if (instructions != null) {
+                this.defaultStream.println(instructions);
             }
+            handleLine(this.scanner.nextLine());
         }
+
     }
 
     private void handleLine(String line) {
@@ -174,6 +176,7 @@ public class UserInteraction {
                     : result.getMessage()));
             outputStream.println();
         }
+
     }
 
     private <T> void printList(List<T> list) {
@@ -187,5 +190,8 @@ public class UserInteraction {
      */
     public void quit() {
         this.isRunning = false;
+        this.scanner.close();
     }
+
+
 }

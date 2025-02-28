@@ -30,4 +30,14 @@ public class EffectStatusCondition implements Effect {
     public boolean executeEffect(Monster... monsters) {
         return true;
     }
+
+    @Override
+    public Strength getDamage() {
+        return null;
+    }
+
+    @Override
+    public int getHitRate() {
+        return this.hitRate;
+    }
 }

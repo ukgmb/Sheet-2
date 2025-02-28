@@ -1,5 +1,6 @@
 package abschluss.model;
 
+import abschluss.view.UserInteraction;
 import abschluss.view.configurator.Configurator;
 
 import java.util.LinkedHashSet;
@@ -18,13 +19,16 @@ public class Game {
 
     private final Set<Monster> allMonsters;
     private Competition competition;
+    private final UserInteraction handler;
 
     /**
      * Constructs a new game instance.
+     * @param handler The user interaction that handles this game
      */
-    public Game() {
+    public Game(UserInteraction handler) {
         this.allMonsters = new LinkedHashSet<>();
         this.competition = null;
+        this.handler = handler;
     }
 
     /**
@@ -54,7 +58,7 @@ public class Game {
      * @param monsters List of monsters to participate in the new competition.
      */
     public void startNewCompetition(List<Monster> monsters) {
-        this.competition = new Competition(monsters);
+        this.competition = new Competition(monsters, this.handler);
     }
 
     /**
@@ -81,5 +85,48 @@ public class Game {
         }
 
         return this.competition.show();
+    }
+
+    /**
+     * Returns the current monster's in competition list of possible actions.
+     * @return String containing all the actions, if competition started. Else, returns {@code null}
+     */
+    public String showActions() {
+        if (this.competition == null) {
+            return null;
+        }
+
+        return this.competition.showActions();
+    }
+
+    /**
+     * Shows the stats of the current monster in the competition.
+     * @return String containing all the stats, if competition started. Else, returns {@code null}
+     */
+    public String showStats() {
+        if (this.competition == null) {
+            return null;
+        }
+
+        return this.competition.showStats();
+    }
+
+    /**
+     * Passes the current monster's turn in a competition.
+     * @return {@code true}, if successful. {@code false}, if competition hasn't started yet
+     */
+    public boolean pass() {
+        return this.competition != null && this.competition.nextMonstersTurn();
+    }
+
+    /**
+     * Gets the message of the game to be give to the user.
+     * @return The message, if there is one. Else, returns {@code null}
+     */
+    public String getMessage() {
+        if (this.competition == null) {
+            return null;
+        }
+        return this.competition.whatMonsterShouldDo();
     }
 }

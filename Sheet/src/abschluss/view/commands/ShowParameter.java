@@ -13,9 +13,13 @@ public enum ShowParameter {
     MONSTERS,
 
     /**
-     * The show command shows the possible actions of the current monster.
+     * The show command shows the possible actions of the current monster in the competition.
      */
-    ACTIONS;
+    ACTIONS,
+    /**
+     * The show command shows the stats of the current monster in the competition.
+     */
+    STATS;
 
     /**
      * Returns whether the parameter matches the given input.

@@ -20,7 +20,7 @@ public class ArgumentsCommand {
     private static final String ERROR_MESSAGE_TOO_FEW_ARGUMENTS = "too few arguments provided.";
     private static final String ERROR_MESSAGE_INVALID_SHOW_PARAMETER = "invalid parameter for show";
     private static final String ERROR_MESSAGE_MONSTER_NOT_FOUND = "monster '%s' wasn't declared.";
-    private static final String ERROR_MESSAGE_MINIMUM_2_MONSTERS ="min 2 monsters are required to start a new "
+    private static final String ERROR_MESSAGE_MINIMUM_2_MONSTERS = "min 2 monsters are required to start a new "
             + "competition.";
     private static final int MINIMUM_FOR_COMPETITION = 2;
 
