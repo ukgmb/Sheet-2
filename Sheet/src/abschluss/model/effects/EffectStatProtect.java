@@ -7,7 +7,7 @@ import abschluss.model.Monster;
  *
  * @author ukgmb
  */
-public class EffectStatProtect implements Effect {
+public class EffectStatProtect extends Effect {
 
     private final ProtectType protect;
     private final Count count;
@@ -26,7 +26,7 @@ public class EffectStatProtect implements Effect {
     }
 
     @Override
-    public boolean executeEffect(Monster... monsters) {
+    public boolean executeEffect() {
         return true;
     }
 

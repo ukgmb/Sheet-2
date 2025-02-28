@@ -8,7 +8,7 @@ import abschluss.model.StatusCondition;
  *
  * @author ukgmb
  */
-public class EffectStatusCondition implements Effect {
+public class EffectStatusCondition extends Effect {
 
     private final TargetMonster target;
     private final StatusCondition condition;
@@ -27,7 +27,7 @@ public class EffectStatusCondition implements Effect {
     }
 
     @Override
-    public boolean executeEffect(Monster... monsters) {
+    public boolean executeEffect() {
         return true;
     }
 

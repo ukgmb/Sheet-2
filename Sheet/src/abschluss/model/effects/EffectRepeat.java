@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author ukgmb
  */
-public class EffectRepeat implements Effect {
+public class EffectRepeat extends Effect {
     private static final int FIRST_EFFECT_INDEX = 0;
 
     private final Count count;
@@ -26,7 +26,7 @@ public class EffectRepeat implements Effect {
     }
 
     @Override
-    public boolean executeEffect(Monster... monsters) {
+    public boolean executeEffect() {
         return true;
     }
 

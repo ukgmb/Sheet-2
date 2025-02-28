@@ -7,7 +7,7 @@ import abschluss.model.Monster;
  *
  * @author ukgmb
  */
-public class EffectHeal implements Effect {
+public class EffectHeal extends Effect {
 
     private final TargetMonster target;
     private final Strength strength;
@@ -26,7 +26,7 @@ public class EffectHeal implements Effect {
     }
 
     @Override
-    public boolean executeEffect(Monster... monsters) {
+    public boolean executeEffect() {
         return true;
     }
 

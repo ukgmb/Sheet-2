@@ -6,6 +6,7 @@ import abschluss.view.configurator.Configurator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 
 /**
  * This class handles all the game mechanics. It organizes the monsters and its actions during competitions.
@@ -44,13 +45,13 @@ public class Game {
      * @return All monsters with its stats.
      */
     public String showMonsters() {
-        StringBuilder builder = new StringBuilder();
+        StringJoiner joiner = new StringJoiner(System.lineSeparator());
 
         for (Monster monster : this.allMonsters) {
-            builder.append(monster.getStats()).append(System.lineSeparator());
+            joiner.add(monster.getStats());
         }
 
-        return builder.toString();
+        return joiner.toString();
     }
 
     /**

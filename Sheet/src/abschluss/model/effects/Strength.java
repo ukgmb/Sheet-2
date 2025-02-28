@@ -24,6 +24,22 @@ public class Strength {
         this.value = value;
     }
 
+    /**
+     * Returns the type of strength.
+     * @return The type of strength
+     */
+    protected StrengthType getStrengthType() {
+        return strengthType;
+    }
+
+    /**
+     * Returns the value of the strength.
+     * @return The value of the strength
+     */
+    public int getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return switch (this.strengthType) {

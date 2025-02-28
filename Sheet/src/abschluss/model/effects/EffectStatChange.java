@@ -7,7 +7,7 @@ import abschluss.model.Monster;
  *
  * @author ukgmb
  */
-public class EffectStatChange implements Effect {
+public class EffectStatChange extends Effect {
 
     private final TargetMonster target;
     private final Stat stat;
@@ -29,7 +29,7 @@ public class EffectStatChange implements Effect {
     }
 
     @Override
-    public boolean executeEffect(Monster... monsters) {
+    public boolean executeEffect() {
         return true;
     }
 

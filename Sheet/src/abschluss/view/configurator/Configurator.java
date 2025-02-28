@@ -7,14 +7,7 @@ import abschluss.view.InvalidArgumentException;
 import abschluss.view.Result;
 import abschluss.view.ResultType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * Configurations the @code{Game} using a text file.
@@ -52,7 +45,7 @@ public class Configurator {
         this.allDeclaredActions = new ArrayList<>();
         this.allDeclaredMonsters = new LinkedHashSet<>();
         this.allLines = allLines;
-        this.count = new HashMap<>();
+        this.count = new LinkedHashMap<>();
         this.allActionsDeclared = false;
     }
 

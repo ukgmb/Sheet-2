@@ -100,12 +100,14 @@ public class UserInteraction {
      */
     public void handleUserInput() {
         this.isRunning = true;
-        while (this.isRunning && this.scanner.hasNextLine()) {
+        while (this.isRunning) {
             String instructions = this.game.getMessage();
             if (instructions != null) {
                 this.defaultStream.println(instructions);
             }
-            handleLine(this.scanner.nextLine());
+            if (this.scanner.hasNextLine()) {
+                handleLine(this.scanner.nextLine());
+            }
         }
 
     }

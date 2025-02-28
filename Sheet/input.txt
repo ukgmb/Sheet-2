@@ -1,0 +1,3 @@
+competition BullFrog FireSnail
+show actions
+quit

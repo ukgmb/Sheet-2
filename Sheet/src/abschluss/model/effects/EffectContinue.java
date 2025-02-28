@@ -7,7 +7,7 @@ import abschluss.model.Monster;
  *
  * @author ukgmb
  */
-public class EffectContinue implements Effect {
+public class EffectContinue extends Effect {
 
     private final int hitRate;
 
@@ -20,7 +20,7 @@ public class EffectContinue implements Effect {
     }
 
     @Override
-    public boolean executeEffect(Monster... monsters) {
+    public boolean executeEffect() {
         return true;
     }
 

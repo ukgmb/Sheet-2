@@ -42,7 +42,7 @@ public class Monster {
 
     private final int maxHitPoints;
 
-    private final int hitPoints;
+    private int hitPoints;
     private final int attackRate;
     private final int defenceRate;
     private final int speedRate;
@@ -190,14 +190,14 @@ public class Monster {
      * @return The string containing all the information
      */
     protected String showActions() {
-        StringBuilder builder = new StringBuilder();
+        StringJoiner joiner = new StringJoiner(System.lineSeparator());
 
-        builder.append(SHOW_ACTIONS_MONSTER_NAME.formatted(this.name)).append(System.lineSeparator());
+        joiner.add(SHOW_ACTIONS_MONSTER_NAME.formatted(this.name));
         for (Action action : this.actions) {
-            builder.append(action.getInfo()).append(System.lineSeparator());
+            joiner.add(action.getInfo());
         }
 
-        return builder.toString();
+        return joiner.toString();
     }
 
     /**
@@ -222,4 +222,31 @@ public class Monster {
         return builder.toString();
     }
 
+    /**
+     * Damages the monster.
+     * @param damage The damage the monster receives
+     */
+    public void damage(int damage) {
+        if (damage > this.hitPoints) {
+            this.hitPoints = HP_NEEDED_FOR_FAINTED;
+        } else {
+            this.hitPoints -= damage;
+        }
+    }
+
+    /**
+     * Returns the maximum hit points.
+     * @return Maximum hit points
+     */
+    public int getMaxHitPoints() {
+        return maxHitPoints;
+    }
+
+    /**
+     * Returns the element of the monster.
+     * @return The element of the monster.
+     */
+    public Element getElement() {
+        return element;
+    }
 }

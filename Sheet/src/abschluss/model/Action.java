@@ -75,4 +75,12 @@ public class Action {
     private String getHitRateInfo() {
         return Integer.toString(this.effects.get(FIRST_EFFECT_INDEX).getHitRate());
     }
+
+    /**
+     * Returns the element of the action.
+     * @return The element of the action.
+     */
+    public Element getElement() {
+        return element;
+    }
 }
