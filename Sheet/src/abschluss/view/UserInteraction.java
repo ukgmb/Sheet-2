@@ -3,17 +3,23 @@ package abschluss.view;
 import abschluss.model.Game;
 import abschluss.model.RandomGenerator;
 import abschluss.view.commands.ArgumentsCommand;
+import abschluss.view.commands.Command;
+import abschluss.view.commands.KeywordCompetition;
 import abschluss.view.commands.KeywordGame;
 import abschluss.view.commands.KeywordUserInteraction;
 import abschluss.view.configurator.Configurator;
-import abschluss.view.commands.Command;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Class which handles the user's input and application's output.
@@ -26,11 +32,13 @@ public class UserInteraction {
     private static final String ERROR_MESSAGE_FILE_NOT_FOUND = "file not found.";
     private static final String ERROR_UNKNOWN_COMMAND_FORMAT = ERROR_PREFIX + "unknown command: %s";
     private static final String ERROR_TOO_MANY_ARGUMENTS = ERROR_PREFIX + "too many arguments provided.";
+    private static final String ERROR_MESSAGE_COMPETITION_NOT_STARTED = "competition not started yet.";
     private static final String COMMAND_SEPARATOR = " ";
 
 
     private final Set<KeywordUserInteraction> keywordsUI = EnumSet.allOf(KeywordUserInteraction.class);
     private final Set<KeywordGame> keywordsGame = EnumSet.allOf(KeywordGame.class);
+    private final Set<KeywordCompetition> keywordsCompetition = EnumSet.allOf(KeywordCompetition.class);
     private final PrintStream defaultStream;
     private final PrintStream errorStream;
     private Game game;
@@ -87,7 +95,7 @@ public class UserInteraction {
             this.defaultStream.println();
             this.defaultStream.println(configurator.getDeclarationCount());
             this.defaultStream.println();
-            this.game = new Game(this);
+            this.game = new Game(this, this.random);
             configurator.loadConfiguration(this.game);
             return true;
         }
@@ -120,24 +128,30 @@ public class UserInteraction {
         }
 
         if (!findAndHandleCommand(this.keywordsUI, this, command, arguments)
-                && !findAndHandleCommand(this.keywordsGame, this.game, command, arguments)) {
+                && !findAndHandleCommand(this.keywordsGame, this.game, command, arguments)
+                && !findAndHandleCommand(this.keywordsCompetition, this.game.getCompetition(), command, arguments)) {
             this.errorStream.printf((ERROR_UNKNOWN_COMMAND_FORMAT) + "%n", command);
         }
     }
 
     private <S, T extends Keyword<Command<S>, ArgumentsCommand>> boolean
         findAndHandleCommand(Set<T> keywords, S handle, String command, String arguments) {
-        T keyword = retrieveKeyword(keywords, command);
+        T keyword = retrieveKeyword(keywords, command, arguments);
         if (keyword != null) {
-            handleCommand(handle, arguments, keyword);
+            if (handle == null) {
+                this.errorStream.println(ERROR_PREFIX + ERROR_MESSAGE_COMPETITION_NOT_STARTED);
+            } else {
+                handleCommand(handle, arguments, keyword);
+            }
             return true;
         }
         return false;
     }
 
-    private static <T extends Keyword<?, ?>> T retrieveKeyword(Collection<T> keywords, String command) {
+    private static <T extends Keyword<?, ?>> T retrieveKeyword(Collection<T> keywords, String command,
+                                                               String arguments) {
         for (T keyword : keywords) {
-            if (keyword.matches(command)) {
+            if (keyword.matches(command, arguments)) {
                 return keyword;
             }
         }

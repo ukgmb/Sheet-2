@@ -1,7 +1,8 @@
 package abschluss.model.effects;
 
-import abschluss.model.Monster;
 import abschluss.model.RandomGenerator;
+
+import java.util.List;
 
 /**
  * Represents the stat protect effect which either protects the health or the stats of a monster.
@@ -21,6 +22,7 @@ public class EffectStatProtect extends Effect {
      * @param hitRate Hit rate of the effect
      */
     public EffectStatProtect(ProtectType protect, Count count, int hitRate) {
+        super(false);
         this.protect = protect;
         this.count = count;
         this.hitRate = hitRate;
@@ -44,5 +46,10 @@ public class EffectStatProtect extends Effect {
     @Override
     public int getHitRate() {
         return this.hitRate;
+    }
+
+    @Override
+    public List<Effect> getEffects() {
+        return null;
     }
 }

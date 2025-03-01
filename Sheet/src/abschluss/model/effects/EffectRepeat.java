@@ -1,8 +1,8 @@
 package abschluss.model.effects;
 
-import abschluss.model.Monster;
 import abschluss.model.RandomGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +22,7 @@ public class EffectRepeat extends Effect {
      * @param effects All the effects except the {@code EffectRepeat} which should be executed.
      */
     public EffectRepeat(Count count, List<Effect> effects) {
+        super(true);
         this.count = count;
         this.effects = effects;
     }
@@ -38,7 +39,7 @@ public class EffectRepeat extends Effect {
 
     @Override
     public boolean executeEffect(RandomGenerator random) {
-        return true;
+        return false;
     }
 
     @Override
@@ -49,5 +50,15 @@ public class EffectRepeat extends Effect {
     @Override
     public int getHitRate() {
         return this.effects.get(FIRST_EFFECT_INDEX).getHitRate();
+    }
+
+    @Override
+    public List<Effect> getEffects() {
+        int count = this.count.getCount();
+        List<Effect> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.addAll(this.effects);
+        }
+        return list;
     }
 }

@@ -1,7 +1,8 @@
 package abschluss.model.effects;
 
-import abschluss.model.Monster;
 import abschluss.model.RandomGenerator;
+
+import java.util.List;
 
 /**
  * Represents the continue effect. If hit nothing happens.
@@ -17,6 +18,7 @@ public class EffectContinue extends Effect {
      * @param hitRate Hit rate of the effect
      */
     public EffectContinue(int hitRate) {
+        super(false);
         this.hitRate = hitRate;
     }
 
@@ -38,5 +40,10 @@ public class EffectContinue extends Effect {
     @Override
     public boolean needsOpponent() {
         return false;
+    }
+
+    @Override
+    public List<Effect> getEffects() {
+        return null;
     }
 }

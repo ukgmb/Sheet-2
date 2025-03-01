@@ -14,19 +14,23 @@ public enum KeywordGame implements Keyword<Command<Game>, ArgumentsCommand> {
 
 
     /**
-     * Represents the {@link CommandShow} to show specific information of the game.
+     * Represents the {@link CommandShow} to show monsters of the game.
      */
-    SHOW(arguments -> new CommandShow(arguments.parseParameter())),
+    SHOW(arguments -> {
+        arguments.retrieveArgument();
+        return new CommandShowMonsters(); }, "monsters"),
     /**
      * Represents the {@link CommandCompetition} to start a new competition.
      */
-    COMPETITION(arguments -> new CommandCompetition(arguments.parseParticipants()));
+    COMPETITION(arguments -> new CommandCompetition(arguments.parseParticipants()), null);
 
 
     private final Provider<Command<Game>, ArgumentsCommand> provider;
+    private final String additionalArgument;
 
-    KeywordGame(Provider<Command<Game>, ArgumentsCommand> provider) {
+    KeywordGame(Provider<Command<Game>, ArgumentsCommand> provider, String additionalArgument) {
         this.provider = provider;
+        this.additionalArgument = additionalArgument;
     }
 
     @Override
@@ -35,7 +39,10 @@ public enum KeywordGame implements Keyword<Command<Game>, ArgumentsCommand> {
     }
 
     @Override
-    public boolean matches(String input) {
-        return name().toLowerCase().equals(input);
+    public boolean matches(String input, String additionalArgument) {
+        if (this.additionalArgument == null) {
+            return name().toLowerCase().equals(input);
+        }
+        return name().toLowerCase().equals(input) && this.additionalArgument.equals(additionalArgument);
     }
 }

@@ -26,6 +26,7 @@ public class Game {
     /**
      * Constructs a new game instance.
      * @param handler The user interaction that handles this game
+     * @param randomGenerator The random generator used to generate random numbers
      */
     public Game(UserInteraction handler, RandomGenerator randomGenerator) {
         this.allMonsters = new LinkedHashSet<>();
@@ -61,7 +62,7 @@ public class Game {
      * @param monsters List of monsters to participate in the new competition.
      */
     public void startNewCompetition(List<Monster> monsters) {
-        this.competition = new Competition(monsters, this.handler);
+        this.competition = new Competition(monsters, this.handler, this.randomGenerator);
     }
 
     /**
@@ -76,50 +77,6 @@ public class Game {
             }
         }
         return null;
-    }
-
-    /**
-     * Returns the monsters status who are in a competition.
-     * @return String that shows the status. If competition hasn't started yet, then returns {@code null}
-     */
-    public String show() {
-        if (this.competition == null) {
-            return null;
-        }
-
-        return this.competition.show();
-    }
-
-    /**
-     * Returns the current monster's in competition list of possible actions.
-     * @return String containing all the actions, if competition started. Else, returns {@code null}
-     */
-    public String showActions() {
-        if (this.competition == null) {
-            return null;
-        }
-
-        return this.competition.showActions();
-    }
-
-    /**
-     * Shows the stats of the current monster in the competition.
-     * @return String containing all the stats, if competition started. Else, returns {@code null}
-     */
-    public String showStats() {
-        if (this.competition == null) {
-            return null;
-        }
-
-        return this.competition.showStats();
-    }
-
-    /**
-     * Passes the current monster's turn in a competition.
-     * @return {@code true}, if successful. {@code false}, if competition hasn't started yet
-     */
-    public boolean pass() {
-        return this.competition != null && this.competition.nextMonstersTurn();
     }
 
     /**
@@ -143,15 +100,10 @@ public class Game {
     }
 
     /**
-     * Returns whether a competition is running or not.
-     * @return {@code true}, if competition is running. Else, returns {@code false}
+     * Returns the current competition.
+     * @return The current competition
      */
-    public boolean competitionIsRunning() {
-        return this.competition != null;
+    public Competition getCompetition() {
+        return this.competition;
     }
-
-    /**
-     * Searches for the target monster in the competition.
-     * @return Target monster if possible. Else, returns {@code null}
-     */
 }

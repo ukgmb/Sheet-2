@@ -1,7 +1,7 @@
 package abschluss.view.commands;
 
 import abschluss.model.Action;
-import abschluss.model.Game;
+import abschluss.model.Competition;
 import abschluss.model.Monster;
 import abschluss.view.Result;
 
@@ -10,7 +10,7 @@ import abschluss.view.Result;
  *
  * @author ukgmb
  */
-public class CommandAction implements Command<Game> {
+public class CommandAction implements Command<Competition> {
 
     private final Action action;
     private final Monster target;
@@ -31,7 +31,7 @@ public class CommandAction implements Command<Game> {
      * @return result of the execution
      */
     @Override
-    public Result execute(Game handle) {
-        return null;
+    public Result execute(Competition handle) {
+        return Result.success("Yeah");
     }
 }

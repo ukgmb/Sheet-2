@@ -1,6 +1,6 @@
 package abschluss.view.commands;
 
-import abschluss.model.Game;
+import abschluss.model.Competition;
 import abschluss.view.Result;
 
 /**
@@ -9,7 +9,7 @@ import abschluss.view.Result;
  *
  * @author ukgmb
  */
-public class CommandPass implements Command<Game> {
+public class CommandPass implements Command<Competition> {
 
     private static final String ERROR_MESSAGE_COMPETITION_NOT_STARTED = "competition hasn't started yet.";
 
@@ -19,7 +19,7 @@ public class CommandPass implements Command<Game> {
      * @return result of the execution
      */
     @Override
-    public Result execute(Game handle) {
-        return handle.pass() ? Result.success() : Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED);
+    public Result execute(Competition handle) {
+        return handle.nextMonstersTurn() ? Result.success() : Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED);
     }
 }

@@ -33,7 +33,7 @@ public enum KeywordUserInteraction implements Keyword<Command<UserInteraction>, 
     }
 
     @Override
-    public boolean matches(String input) {
+    public boolean matches(String input, String additionalArguments) {
         return name().toLowerCase().equals(input);
     }
 }

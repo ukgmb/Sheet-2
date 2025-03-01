@@ -4,6 +4,8 @@ import abschluss.model.Element;
 import abschluss.model.Monster;
 import abschluss.model.RandomGenerator;
 
+import java.util.List;
+
 /**
  * Represents the damage effect which damages the targeted monster.
  *
@@ -36,6 +38,7 @@ public class EffectDamage extends Effect {
      * @param hitRate Hit rate of the damage effect
      */
     public EffectDamage(TargetMonster target, Strength strength, int hitRate) {
+        super(false);
         this.target = target;
         this.strength = strength;
         this.hitRate = hitRate;
@@ -53,11 +56,11 @@ public class EffectDamage extends Effect {
         if (hit(target, random)) {
             switch (this.strength.getStrengthType()) {
 
-                case ABS: target.damage(this.strength.getValue());
+                case ABS: target.damage(this.strength.getValue(), this.arguments.getUserMonster() != target);
                     break;
-                case REL: target.damage(relativeDamage(target));
+                case REL: target.damage(relativeDamage(target), this.arguments.getUserMonster() != target);
                     break;
-                case BASE: target.damage(baseDamage(target, random));
+                case BASE: target.damage(baseDamage(target, random), this.arguments.getUserMonster() != target);
                 default:
             }
             return true;
@@ -67,10 +70,10 @@ public class EffectDamage extends Effect {
 
     private boolean hit(Monster target, RandomGenerator random) {
         if (target == this.arguments.getUserMonster()) {
-            return random.outcomeOf(this.hitRate * this.arguments.getUserMonster().getPrecisionRate());
+            return random.outcomeOf(this.hitRate * this.arguments.getUserMonster().getEffectiveStat(Stat.PRC));
         }
-        return random.outcomeOf(this.hitRate * (double) (this.arguments.getUserMonster().getPrecisionRate()
-                / target.getAgilityRate()));
+        return random.outcomeOf(this.hitRate * (this.arguments.getUserMonster().getEffectiveStat(Stat.PRC)
+                / target.getEffectiveStat(Stat.AGL)));
     }
 
     private int relativeDamage(Monster target) {
@@ -81,7 +84,7 @@ public class EffectDamage extends Effect {
     private int baseDamage(Monster target, RandomGenerator random) {
 
         double elementFactor = elementFactor(target);
-        double statusFactor = ((double) this.arguments.getUserMonster().getAttackRate() / target.getDefenceRate());
+        double statusFactor = (this.arguments.getUserMonster().getEffectiveStat(Stat.ATK) / target.getEffectiveStat(Stat.DEF));
         double directHitFactor = directHitFactor(target, random);
         double sameElementFactor = sameElementFactor();
         double randomFactor = random.getRandomDouble(RANDOM_FACTOR_MIN, RANDOM_FACTOR_MAX);
@@ -107,7 +110,7 @@ public class EffectDamage extends Effect {
 
     private double directHitFactor(Monster target, RandomGenerator random) {
         double probability = Math.pow(DIRECT_HIT_FACTOR_BASE, NEGATIVE_FAC
-                * (double) (this.arguments.getUserMonster().getSpeedRate() / target.getSpeedRate()))
+                * (this.arguments.getUserMonster().getEffectiveStat(Stat.SPD) / target.getEffectiveStat(Stat.SPD)))
                 * PER_CENT_FACTOR;
 
         if (random.outcomeOf(probability)) {
@@ -139,5 +142,10 @@ public class EffectDamage extends Effect {
     @Override
     public int getHitRate() {
         return this.hitRate;
+    }
+
+    @Override
+    public List<Effect> getEffects() {
+        return null;
     }
 }

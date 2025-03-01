@@ -96,4 +96,12 @@ public class Action {
         }
         return false;
     }
+
+    /**
+     * Returns the list of effects.
+     * @return The list of effects
+     */
+    protected List<Effect> getEffects() {
+        return effects;
+    }
 }

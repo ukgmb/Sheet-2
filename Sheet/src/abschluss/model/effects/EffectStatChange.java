@@ -3,6 +3,8 @@ package abschluss.model.effects;
 import abschluss.model.Monster;
 import abschluss.model.RandomGenerator;
 
+import java.util.List;
+
 /**
  * Represents the stat change effect which changes one stat of the target monster.
  *
@@ -23,6 +25,7 @@ public class EffectStatChange extends Effect {
      * @param hitRate Hit rate of the effect
      */
     public EffectStatChange(TargetMonster target, Stat stat, int change, int hitRate) {
+        super(false);
         this.target = target;
         this.stat = stat;
         this.change = change;
@@ -47,5 +50,10 @@ public class EffectStatChange extends Effect {
     @Override
     public int getHitRate() {
         return this.hitRate;
+    }
+
+    @Override
+    public List<Effect> getEffects() {
+        return null;
     }
 }

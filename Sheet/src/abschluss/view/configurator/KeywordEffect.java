@@ -73,7 +73,7 @@ public enum KeywordEffect implements Keyword<Effect, ArgumentsEffect> {
     }
 
     @Override
-    public boolean matches(String input) {
+    public boolean matches(String input, String additionalArgument) {
         StringBuilder enumValue = new StringBuilder(this.name().toLowerCase());
         for (int i = 0; i < enumValue.length() - 1; i++) {
             if (enumValue.charAt(i) == WORD_SEPARATOR) {

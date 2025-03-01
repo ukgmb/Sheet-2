@@ -7,10 +7,6 @@ package abschluss.view.commands;
  */
 public enum ShowParameter {
 
-    /**
-     * The show command shows all the monsters with its stats.
-     */
-    MONSTERS,
 
     /**
      * The show command shows the possible actions of the current monster in the competition.

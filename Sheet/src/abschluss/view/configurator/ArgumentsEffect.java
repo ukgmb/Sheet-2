@@ -30,7 +30,7 @@ public class ArgumentsEffect {
             + "integer. But provided %s";
     private static final String ERROR_MESSAGE_NEG_COUNT_NUMBER = "count number must be a non-negative integer."
             + " But provided %s";
-    private static final String ERROR_MESSAGE_CHANGE_INTEGER = "value for status change must be an integer"
+    private static final String ERROR_MESSAGE_CHANGE_INTEGER = "value for status change must be an integer between -5 and +5."
             + " But provided %s";
     private static final String ERROR_MESSAGE_ENUM_PREFIX = "%s must be ";
     private static final String ERROR_MESSAGE_ENUM_DELIMITER = ", ";
@@ -45,6 +45,8 @@ public class ArgumentsEffect {
     private static final int REL_STRENGTH_MIN = 0;
     private static final int REL_STRENGTH_MAX = 100;
     private static final String RANDOM_KEYWORD_COUNT = "random";
+    private static final int MIN_STAT_CHANGE = -5;
+    private static final int MAX_STAT_CHANGE = 5;
 
     private final List<String> arguments;
 
@@ -233,6 +235,9 @@ public class ArgumentsEffect {
         try {
             value = Integer.parseInt(argument);
         } catch (NumberFormatException e) {
+            throw new InvalidArgumentException(ERROR_MESSAGE_CHANGE_INTEGER.formatted(argument));
+        }
+        if (value < MIN_STAT_CHANGE || value > MAX_STAT_CHANGE) {
             throw new InvalidArgumentException(ERROR_MESSAGE_CHANGE_INTEGER.formatted(argument));
         }
 

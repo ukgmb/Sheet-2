@@ -1,7 +1,8 @@
 package abschluss.model.effects;
 
-import abschluss.model.Monster;
 import abschluss.model.RandomGenerator;
+
+import java.util.List;
 
 /**
  * Represents the heal effect which heals the targeted monster.
@@ -21,6 +22,7 @@ public class EffectHeal extends Effect {
      * @param hitRate Hit rate of the heal effect
      */
     public EffectHeal(TargetMonster target, Strength strength, int hitRate) {
+        super(false);
         this.target = target;
         this.strength = strength;
         this.hitRate = hitRate;
@@ -44,5 +46,10 @@ public class EffectHeal extends Effect {
     @Override
     public int getHitRate() {
         return this.hitRate;
+    }
+
+    @Override
+    public List<Effect> getEffects() {
+        return null;
     }
 }

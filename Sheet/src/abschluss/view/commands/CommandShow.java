@@ -1,14 +1,14 @@
 package abschluss.view.commands;
 
-import abschluss.model.Game;
+import abschluss.model.Competition;
 import abschluss.view.Result;
 
 /**
- * This class represents the show command which can show some things from the game, depending on the given argument.
+ * This class represents the show command which can show some things during the competition, depending on the given argument.
  *
  * @author ukgmb
  */
-public class CommandShow implements Command<Game> {
+public class CommandShow implements Command<Competition> {
 
     private static final String ERROR_MESSAGE_COMPETITION_NOT_STARTED = "competition hasn't started yet.";
 
@@ -23,25 +23,14 @@ public class CommandShow implements Command<Game> {
     }
 
     @Override
-    public Result execute(Game handle) {
+    public Result execute(Competition handle) {
         if (this.parameter == null) {
-            String resultShow = handle.show();
-            return resultShow == null ? Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED)
-                    : Result.success(resultShow);
+            return Result.success(handle.show());
         }
 
         return switch (this.parameter) {
-            case ACTIONS -> {
-                String resultActions = handle.showActions();
-                yield resultActions == null ? Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED)
-                        : Result.success(resultActions);
-            }
-            case MONSTERS -> Result.success(handle.showMonsters());
-            case STATS -> {
-                String resultStats = handle.showStats();
-                yield resultStats == null ? Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED)
-                        : Result.success(resultStats);
-            }
+            case ACTIONS -> Result.success(handle.showActions());
+            case STATS -> Result.success(handle.showStats());
         };
 
     }

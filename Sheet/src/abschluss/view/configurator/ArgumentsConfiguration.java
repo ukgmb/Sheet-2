@@ -129,7 +129,7 @@ public class ArgumentsConfiguration {
 
     private KeywordEffect retrieveEffectKeyword(String effect) throws InvalidArgumentException {
         for (KeywordEffect keyword : KeywordEffect.values()) {
-            if (keyword.matches(effect)) {
+            if (keyword.matches(effect, null)) {
                 return keyword;
             }
         }

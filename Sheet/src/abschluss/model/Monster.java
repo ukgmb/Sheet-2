@@ -36,7 +36,14 @@ public class Monster {
     private static final String SHOW_ACTIONS_MONSTER_NAME = "ACTIONS OF %s";
 
     private static final String SHOW_STATS_MONSTER_NAME = "STATS OF %s";
+    private static final String STAT_CHANGE = "(%s)";
     private static final String SHOW_STATS_HEALTH_SEPARATOR = "/";
+    private static final int DEFAULT_STAT_CHANGE = 0;
+    private static final int BASIC_FACTOR_ATK_DEF_SPD = 2;
+    private static final int BASIC_FACTOR_PRC_AGL = 3;
+    private static final int POSITIVE_CHANGE_CONDITION = 0;
+    private static final int NO_CHANGE_FACTOR = 1; //Doesn't change anything if you multiply by one
+    private static final double DECREASE_25_FACTOR = 3.0 / 4.0;
 
     private String name;
 
@@ -49,9 +56,15 @@ public class Monster {
     private final int precisionRate;
     private final int agilityRate;
 
+    private int attackChange;
+    private int defenceChange;
+    private int speedChange;
+    private int precisionChange;
+    private int agilityChange;
+
     private final Element element;
     private final Set<Action> actions;
-    private final StatusCondition condition;
+    private StatusCondition condition;
 
     /**
      * Constructs a new monster. Declaration of HitPoints, AttackRate, DefenceRate and SpeedRate are required.
@@ -67,20 +80,22 @@ public class Monster {
     public Monster(String name, Element element, int hitPoints, int attackRate, int defenceRate, int speedRate,
                    Set<Action> actions) {
         this.name = name;
-
         this.maxHitPoints = hitPoints;
-
         this.hitPoints = hitPoints;
         this.attackRate = attackRate;
         this.defenceRate = defenceRate;
         this.speedRate = speedRate;
         this.precisionRate = DEFAULT_PRECISION_RATE;
         this.agilityRate = DEFAULT_AGILITY_RATE;
+        this.attackChange = DEFAULT_STAT_CHANGE;
+        this.defenceChange = DEFAULT_STAT_CHANGE;
+        this.speedChange = DEFAULT_STAT_CHANGE;
+        this.precisionChange = DEFAULT_STAT_CHANGE;
+        this.agilityChange = DEFAULT_AGILITY_RATE;
 
         this.element = element;
         this.actions = actions;
         this.condition = StatusCondition.OK;
-
     }
 
     /**
@@ -90,15 +105,18 @@ public class Monster {
      */
     public Monster(Monster monster) {
         this.name = monster.name;
-
         this.maxHitPoints = monster.hitPoints;
-
         this.hitPoints = monster.hitPoints;
         this.attackRate = monster.attackRate;
         this.defenceRate = monster.defenceRate;
         this.speedRate = monster.speedRate;
         this.agilityRate = monster.agilityRate;
         this.precisionRate = monster.precisionRate;
+        this.attackChange = monster.attackChange;
+        this.defenceChange = monster.defenceChange;
+        this.speedChange = monster.speedChange;
+        this.precisionChange = monster.precisionChange;
+        this.agilityChange = monster.agilityChange;
 
         this.element = monster.element;
         this.actions = monster.actions;
@@ -212,21 +230,27 @@ public class Monster {
         StringJoiner joiner = new StringJoiner(STATS_SEPARATOR);
         joiner.add(SHORT_HIT_POINTS + STAT_VALUE_SEPARATOR + this.hitPoints + SHOW_STATS_HEALTH_SEPARATOR
                 + this.maxHitPoints);
-        joiner.add(Stat.ATK.name() + STAT_VALUE_SEPARATOR + this.attackRate);
-        joiner.add(Stat.DEF.name() + STAT_VALUE_SEPARATOR + this.defenceRate);
-        joiner.add(Stat.SPD.name() + STAT_VALUE_SEPARATOR + this.speedRate);
-        joiner.add(Stat.PRC.name() + STAT_VALUE_SEPARATOR + this.precisionRate);
-        joiner.add(Stat.AGL.name() + STAT_VALUE_SEPARATOR + this.agilityRate);
+        joiner.add(Stat.ATK.name() + STAT_VALUE_SEPARATOR + this.attackRate
+                + (this.attackChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.attackChange) : ""));
+        joiner.add(Stat.DEF.name() + STAT_VALUE_SEPARATOR + this.defenceRate
+                + (this.defenceChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.defenceChange) : ""));
+        joiner.add(Stat.SPD.name() + STAT_VALUE_SEPARATOR + this.speedRate
+                + (this.speedChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.speedChange) : ""));
+        joiner.add(Stat.PRC.name() + STAT_VALUE_SEPARATOR + this.precisionRate
+                + (this.precisionChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.precisionChange) : ""));
+        joiner.add(Stat.AGL.name() + STAT_VALUE_SEPARATOR + this.agilityRate
+                + (this.agilityChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.agilityChange) : ""));
 
-        builder.append(joiner.toString());
+        builder.append(joiner);
         return builder.toString();
     }
 
     /**
      * Damages the monster.
      * @param damage The damage the monster receives
+     * @param protectable able Whether this damage can be protected or not
      */
-    public void damage(int damage) {
+    public void damage(int damage, boolean protectable) {
         if (damage > this.hitPoints) {
             this.hitPoints = HP_NEEDED_FOR_FAINTED;
         } else {
@@ -250,44 +274,60 @@ public class Monster {
         return element;
     }
 
-    /**
-     * Returns the attack rate.
-     * @return The attack rate
-     */
-    public int getAttackRate() {
-        return attackRate;
+    private int getStat(Stat stat) {
+        return switch (stat) {
+            case ATK -> this.attackRate;
+            case DEF -> this.defenceRate;
+            case SPD -> this.speedRate;
+            case PRC -> this.precisionRate;
+            case AGL -> this.agilityRate;
+        };
     }
 
     /**
-     * Returns the defence rate.
-     * @return The defence rate
+     * Returns the effective stat value by taking status change and status condition into consideration.
+     * @param stat The type of stat to be handled.
+     * @return The effect value of the stat.
      */
-    public int getDefenceRate() {
-        return defenceRate;
+    public double getEffectiveStat(Stat stat) {
+        double statFactor = getStatFactor(stat);
+
+        double conditionFactor;
+        if (this.condition != StatusCondition.SLEEP && (stat == Stat.ATK || stat == Stat.DEF || stat == Stat.SPD)) {
+            conditionFactor = DECREASE_25_FACTOR;
+        } else {
+            conditionFactor = NO_CHANGE_FACTOR;
+        }
+
+        return getStat(stat) * statFactor * conditionFactor;
     }
 
-    /**
-     * Returns the speed.
-     * @return The speed
-     */
-    public int getSpeedRate() {
-        return speedRate;
+    private double getStatFactor(Stat stat) {
+        double baseFactor;
+        if (stat == Stat.ATK || stat == Stat.DEF || stat == Stat.SPD) {
+            baseFactor = BASIC_FACTOR_ATK_DEF_SPD;
+        } else {
+            baseFactor = BASIC_FACTOR_PRC_AGL;
+        }
+        int changeFactor = getChangeStat(stat);
+
+        double statFactor;
+        if (changeFactor >= POSITIVE_CHANGE_CONDITION) {
+            statFactor = ((baseFactor + changeFactor) / baseFactor);
+        } else {
+            statFactor = (baseFactor / (baseFactor - changeFactor));
+        }
+        return statFactor;
     }
 
-    /**
-     * Returns the precision rate.
-     * @return Precision rate
-     */
-    public int getPrecisionRate() {
-        return precisionRate;
-    }
-
-    /**
-     * Returns the agility rate.
-     * @return Agility rate
-     */
-    public int getAgilityRate() {
-        return agilityRate;
+    private int getChangeStat(Stat stat) {
+        return switch (stat) {
+            case ATK -> this.attackChange;
+            case DEF -> this.defenceChange;
+            case SPD -> this.speedChange;
+            case PRC -> this.precisionChange;
+            case AGL -> this.agilityChange;
+        };
     }
 
     /**
@@ -302,5 +342,28 @@ public class Monster {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns whether monster currently suffers a status condition, except OK.
+     * @return {@code true}, if suffers. Else, returns {@code false}
+     */
+    protected boolean suffers() {
+        return this.condition != StatusCondition.OK;
+    }
+
+    /**
+     * Ends the suffering under a status condition.
+     */
+    protected void endSuffering() {
+        this.condition = StatusCondition.OK;
+    }
+
+    /**
+     * Returns current status condition.
+     * @return Current status condition
+     */
+    protected StatusCondition getCondition() {
+        return this.condition;
     }
 }

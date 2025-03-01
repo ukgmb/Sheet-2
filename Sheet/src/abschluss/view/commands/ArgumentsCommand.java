@@ -23,7 +23,7 @@ public class ArgumentsCommand {
     private static final String ERROR_MESSAGE_MONSTER_NOT_FOUND = "monster '%s' wasn't declared.";
     private static final String ERROR_MESSAGE_MINIMUM_2_MONSTERS = "min 2 monsters are required to start a new "
             + "competition.";
-    private static final String ERROR_MESSAGE_COMPETITION_NOT_STARTED = "competition hasn't started yet.";
+    private static final String ERROR_MESSAGE_MONSTER_NEEDED = "the action '%s' needs a target monster.";
     private static final String ERROR_MESSAGE_ACTION_NOT_FOUND = "action '%s' was not found.";
     private static final int MINIMUM_FOR_COMPETITION = 2;
 
@@ -48,7 +48,12 @@ public class ArgumentsCommand {
         this.game = game;
     }
 
-    private String retrieveArgument() throws InvalidArgumentException {
+    /**
+     * Retrieves an argument from the given arguments.
+     * @return The retrieved argument
+     * @throws InvalidArgumentException if too few arguments were provided
+     */
+    protected String retrieveArgument() throws InvalidArgumentException {
         if (isExhausted()) {
             throw new InvalidArgumentException(ERROR_MESSAGE_TOO_FEW_ARGUMENTS);
         }
@@ -120,9 +125,6 @@ public class ArgumentsCommand {
      * @throws InvalidArgumentException if parsing fails
      */
     protected Action parseAction() throws InvalidArgumentException {
-        if (!this.game.competitionIsRunning()) {
-            throw new InvalidArgumentException(ERROR_MESSAGE_COMPETITION_NOT_STARTED);
-        }
         String argument = retrieveArgument();
         Action action = this.game.getAction(argument);
 
@@ -134,13 +136,27 @@ public class ArgumentsCommand {
 
     /**
      * Parses the target monster of the action. Doesn't always require user's input.
+     * @param action The action the monster plays
      * @return The target monster, if possible
      * @throws InvalidArgumentException if parsing fails
      */
-    protected Monster parseMonster(Action action) throws InvalidArgumentException {
+    protected Monster parseTargetMonster(Action action) throws InvalidArgumentException {
         if (isExhausted() && action.needsOpponent()) {
-
+            Monster monster = this.game.getCompetition().searchMonster();
+            if (monster == null) {
+                throw new InvalidArgumentException(ERROR_MESSAGE_MONSTER_NEEDED.formatted(action.getName()));
+            }
+            return monster;
         }
+        if (isExhausted()) {
+            return this.game.getCompetition().getCurrent();
+        }
+        String argument = retrieveArgument();
+        Monster monster = this.game.getCompetition().getMonster(argument);
+        if (monster == null) {
+            throw new InvalidArgumentException(ERROR_MESSAGE_MONSTER_NOT_FOUND.formatted(argument));
+        }
+        return monster;
     }
 
 }
