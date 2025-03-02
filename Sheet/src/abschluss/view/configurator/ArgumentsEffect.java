@@ -153,7 +153,6 @@ public class ArgumentsEffect {
     }
 
     private StrengthType parseStrengthType() throws InvalidArgumentException {
-
         return parseEnumValue(true, StrengthType.values());
     }
 
@@ -167,8 +166,7 @@ public class ArgumentsEffect {
         }
         if ((strengthType == StrengthType.BASE || strengthType == StrengthType.ABS) && value < 0) {
             throw new InvalidArgumentException(ERROR_MESSAGE_STRENGTH_VALUE_NEG.formatted(argument));
-        }
-        if (value < REL_STRENGTH_MIN || value > REL_STRENGTH_MAX) {
+        } else if ((strengthType == StrengthType.REL) && (value < REL_STRENGTH_MIN || value > REL_STRENGTH_MAX)) {
             throw new InvalidArgumentException(ERROR_MESSAGE_STRENGTH_VALUE_REL.formatted(argument));
         }
 

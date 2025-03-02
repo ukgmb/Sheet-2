@@ -55,7 +55,7 @@ public class Action {
     protected String getInfo() {
         StringJoiner joiner = new StringJoiner(INFO_DELIMITER, INFO_PREFIX.formatted(this.name), INFO_SUFFIX);
 
-        joiner.add(INFO_ELEMENT.formatted(this.element));
+        joiner.add(INFO_ELEMENT.formatted(this.element.name()));
         joiner.add(INFO_FIRST_DAMAGE.formatted(getDamageInfo()));
         joiner.add(INFO_FIRST_HIT_RATE.formatted(getHitRateInfo()));
 

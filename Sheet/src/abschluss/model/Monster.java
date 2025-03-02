@@ -1,5 +1,6 @@
 package abschluss.model;
 
+import abschluss.model.effects.ProtectType;
 import abschluss.model.effects.Stat;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -28,34 +29,23 @@ public class Monster {
     private static final String PLACEHOLDER_STATUS = "%s"; //Placeholder to get filled later by competition class.
     private static final String SHOW_ACTIONS_MONSTER_NAME = "ACTIONS OF %s";
     private static final String SHOW_STATS_MONSTER_NAME = "STATS OF %s";
-    private static final String STAT_CHANGE = "(%s)";
     private static final String SHOW_STATS_HEALTH_SEPARATOR = "/";
-    private static final int DEFAULT_STAT_CHANGE = 0;
     private static final int BASIC_FACTOR_ATK_DEF_SPD = 2;
     private static final int BASIC_FACTOR_PRC_AGL = 3;
     private static final int POSITIVE_CHANGE_CONDITION = 0;
     private static final int NO_CHANGE_FACTOR = 1; //Doesn't change anything if you multiply by one
     private static final double DECREASE_25_FACTOR = 3.0 / 4.0;
-    private static final int DEFAULT_PRECISION_RATE = 1;
-    private static final int DEFAULT_AGILITY_RATE = 1;
 
     private String name;
     private final int maxHitPoints;
     private int hitPoints;
-    private final int attackRate;
-    private final int defenceRate;
-    private final int speedRate;
-    private final int precisionRate;
-    private final int agilityRate;
-    private int attackChange;
-    private int defenceChange;
-    private int speedChange;
-    private int precisionChange;
-    private int agilityChange;
+    private final MonsterStats stats;
 
     private final Element element;
     private final Set<Action> actions;
     private StatusCondition condition;
+    private ProtectType protect;
+    private int protectLeft;
 
     /**
      * Constructs a new monster. Declaration of HitPoints, AttackRate, DefenceRate and SpeedRate are required.
@@ -72,19 +62,11 @@ public class Monster {
         this.name = name;
         this.maxHitPoints = hitPoints;
         this.hitPoints = hitPoints;
-        this.attackRate = attackRate;
-        this.defenceRate = defenceRate;
-        this.speedRate = speedRate;
-        this.precisionRate = DEFAULT_PRECISION_RATE;
-        this.agilityRate = DEFAULT_AGILITY_RATE;
-        this.attackChange = DEFAULT_STAT_CHANGE;
-        this.defenceChange = DEFAULT_STAT_CHANGE;
-        this.speedChange = DEFAULT_STAT_CHANGE;
-        this.precisionChange = DEFAULT_STAT_CHANGE;
-        this.agilityChange = DEFAULT_AGILITY_RATE;
+        this.stats = new MonsterStats(attackRate, defenceRate, speedRate);
         this.element = element;
         this.actions = actions;
         this.condition = StatusCondition.OK;
+        this.protect = null;
     }
 
     /**
@@ -95,19 +77,11 @@ public class Monster {
         this.name = monster.name;
         this.maxHitPoints = monster.hitPoints;
         this.hitPoints = monster.hitPoints;
-        this.attackRate = monster.attackRate;
-        this.defenceRate = monster.defenceRate;
-        this.speedRate = monster.speedRate;
-        this.agilityRate = monster.agilityRate;
-        this.precisionRate = monster.precisionRate;
-        this.attackChange = monster.attackChange;
-        this.defenceChange = monster.defenceChange;
-        this.speedChange = monster.speedChange;
-        this.precisionChange = monster.precisionChange;
-        this.agilityChange = monster.agilityChange;
+        this.stats = new MonsterStats(monster.stats);
         this.element = monster.element;
         this.actions = monster.actions;
         this.condition = monster.condition;
+        this.protect = monster.protect;
     }
 
     /**
@@ -126,9 +100,7 @@ public class Monster {
         StringJoiner joiner = new StringJoiner(STATS_SEPARATOR, this.name + NAME_STATS_SEPARATOR, EMPTY_SUFFIX);
         joiner.add(Element.class.getSimpleName() + STAT_VALUE_SEPARATOR + this.element.name());
         joiner.add(SHORT_HIT_POINTS + STAT_VALUE_SEPARATOR + this.hitPoints);
-        joiner.add(Stat.ATK.name() + STAT_VALUE_SEPARATOR + this.attackRate);
-        joiner.add(Stat.DEF.name() + STAT_VALUE_SEPARATOR + this.defenceRate);
-        joiner.add(Stat.SPD.name() + STAT_VALUE_SEPARATOR + this.speedRate);
+        joiner.add(this.stats.getMainStats());
         return joiner.toString();
     }
 
@@ -205,16 +177,7 @@ public class Monster {
         StringJoiner joiner = new StringJoiner(STATS_SEPARATOR);
         joiner.add(SHORT_HIT_POINTS + STAT_VALUE_SEPARATOR + this.hitPoints + SHOW_STATS_HEALTH_SEPARATOR
                 + this.maxHitPoints);
-        joiner.add(Stat.ATK.name() + STAT_VALUE_SEPARATOR + this.attackRate
-                + (this.attackChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.attackChange) : ""));
-        joiner.add(Stat.DEF.name() + STAT_VALUE_SEPARATOR + this.defenceRate
-                + (this.defenceChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.defenceChange) : ""));
-        joiner.add(Stat.SPD.name() + STAT_VALUE_SEPARATOR + this.speedRate
-                + (this.speedChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.speedChange) : ""));
-        joiner.add(Stat.PRC.name() + STAT_VALUE_SEPARATOR + this.precisionRate
-                + (this.precisionChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.precisionChange) : ""));
-        joiner.add(Stat.AGL.name() + STAT_VALUE_SEPARATOR + this.agilityRate
-                + (this.agilityChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.agilityChange) : ""));
+        joiner.add(this.stats.getAllStatsWithChange());
         builder.append(joiner);
         return builder.toString();
     }
@@ -261,13 +224,7 @@ public class Monster {
     }
 
     private int getStat(Stat stat) {
-        return switch (stat) {
-            case ATK -> this.attackRate;
-            case DEF -> this.defenceRate;
-            case SPD -> this.speedRate;
-            case PRC -> this.precisionRate;
-            case AGL -> this.agilityRate;
-        };
+        return this.stats.getStat(stat);
     }
 
     /**
@@ -305,13 +262,7 @@ public class Monster {
     }
 
     private int getChangeStat(Stat stat) {
-        return switch (stat) {
-            case ATK -> this.attackChange;
-            case DEF -> this.defenceChange;
-            case SPD -> this.speedChange;
-            case PRC -> this.precisionChange;
-            case AGL -> this.agilityChange;
-        };
+        return this.stats.getChangeStat(stat);
     }
 
     /**
@@ -359,14 +310,7 @@ public class Monster {
      */
     public void inflictStatChange(Stat stat, int change, boolean protection) {
         if (protection) {
-            switch (stat) {
-                case ATK -> this.attackChange = change;
-                case DEF -> this.defenceChange = change;
-                case SPD -> this.speedChange = change;
-                case PRC -> this.precisionChange = change;
-                case AGL -> this.agilityChange = change;
-                default -> this.isFainted();
-            }
+            this.stats.setStat(stat, change);
         }
     }
 
@@ -378,5 +322,27 @@ public class Monster {
         if (this.condition == StatusCondition.OK) {
             this.condition = statusCondition;
         }
+    }
+
+    /**
+     * Adds protection to the monster.
+     * @param protect Type of protection to be added
+     * @param rounds Number of rounds the protection should hold
+     */
+    public void addProtection(ProtectType protect, int rounds) {
+        this.protect = protect;
+        this.protectLeft = rounds + 1;
+    }
+
+    /**
+     * Removes protection left by one.
+     * @return {@code true}, if monster isn't protected anymore. Else, returns {@code false}
+     */
+    public boolean removeProtection() {
+        if (this.protectLeft > 0) {
+            this.protectLeft--;
+            return this.protectLeft == 0;
+        }
+        return true;
     }
 }

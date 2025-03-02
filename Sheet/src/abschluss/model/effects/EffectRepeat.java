@@ -53,8 +53,8 @@ public class EffectRepeat extends Effect {
     }
 
     @Override
-    public List<Effect> getEffects() {
-        int count = this.count.getCount();
+    public List<Effect> getEffects(RandomGenerator random) {
+        int count = this.count.getCount(random);
         List<Effect> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             list.addAll(this.effects);

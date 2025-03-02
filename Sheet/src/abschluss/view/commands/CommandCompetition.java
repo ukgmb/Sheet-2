@@ -28,7 +28,9 @@ public class CommandCompetition implements Command<Game> {
     @Override
     public Result execute(Game handle) {
         handle.startNewCompetition(this.participants);
-        return Result.success(COMPETITION_START_MESS.formatted(this.participants.size()));
+        Result phase0 = handle.getCompetition().evaluatePhase0();
+        return phase0 == null ? Result.success(COMPETITION_START_MESS.formatted(this.participants.size()))
+                : phase0;
     }
 }
 

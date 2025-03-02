@@ -5,6 +5,7 @@ import abschluss.model.effects.EffectDamage;
 import abschluss.model.effects.Strength;
 import abschluss.model.effects.StrengthType;
 import abschluss.model.effects.TargetMonster;
+import abschluss.view.Result;
 import abschluss.view.UserInteraction;
 
 import java.util.ArrayDeque;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.StringJoiner;
 
 /**
  * This class handles a competition between {@link Monster}.
@@ -30,7 +32,11 @@ public class Competition {
     private static final double PROBABILITY_END_STATUS_CONDITION = 1.0 / 3.0;
     private static final int BURN_DAMAGE = 10;
     private static final int BURN_HIT_RATE = 100;
+    private static final String MESSAGE_MONSTER_WON_COMPETITION = "%s has no opponents left and wins the competition!";
+    private static final String MESSAGE_TIED_COMPETITION = "All monsters have fainted. The competition ends without a winner!";
+    private static final int NUM_OF_MONSTERS_WIN = 1;
 
+    private final List<Monster> allMonsters;
     private final List<Monster> aliveMonsters;
     private Map<Monster, Integer> countOfMonsters;
     private Map<Monster, Integer> maxNumOfMonster;
@@ -47,23 +53,24 @@ public class Competition {
      * @param allMonsters List of monsters to participate in the competition
      * @param handler The user interaction that handle the competition
      * @param random The random generator
-     * @param game The game in which the competition currently runs
+     * @param game The game in which the competition is currently played
      */
     protected Competition(List<Monster> allMonsters, UserInteraction handler, RandomGenerator random, Game game) {
         countMonsters(allMonsters);
-        this.aliveMonsters = new ArrayList<>();
+        this.allMonsters = new ArrayList<>();
         for (Monster monster : allMonsters) {
             if (this.countOfMonsters.containsKey(monster)) {
                 Monster duplicateMonster = new Monster(monster);
                 duplicateMonster.addNameSuffix(PREFIX_SAME_MONSTER + getMonsterNumber(monster));
-                this.aliveMonsters.add(duplicateMonster);
+                this.allMonsters.add(duplicateMonster);
             } else {
-                this.aliveMonsters.add(new Monster(monster));
+                this.allMonsters.add(new Monster(monster));
             }
         }
-        this.current = this.aliveMonsters.get(FIRST_MONSTER_TURN_INDEX);
+        this.current = this.allMonsters.get(FIRST_MONSTER_TURN_INDEX);
+        this.aliveMonsters = new ArrayList<>(this.allMonsters);
         this.handler = handler;
-        this.phase = CompetitionPhases.PHASE_1;
+        this.phase = CompetitionPhases.PHASE_0;
         this.actionsQueue = new ArrayList<>();
         this.random = random;
         this.game = game;
@@ -87,19 +94,27 @@ public class Competition {
     }
 
     /**
+     * Returns the game instance in which the competition is held.
+     * @return The game instance in which the competition is held
+     */
+    public Game getGame() {
+        return game;
+    }
+
+    /**
      * Constructs a string which shows every monster's current status with a health bar and status condition.
      * @return The string containing all the information
      */
     public String show() {
-        StringBuilder builder = new StringBuilder();
+        StringJoiner joiner = new StringJoiner(System.lineSeparator());
 
         for (Monster monster : this.aliveMonsters) {
             String status = monster.getStatus().formatted(this.aliveMonsters.indexOf(monster) + 1,
                     monster == this.current ? MARKING_CURRENT_MONSTER : MARKING_NOT_CURRENT_MONSTER);
-            builder.append(status).append(System.lineSeparator());
+            joiner.add(status);
         }
 
-        return builder.toString();
+        return joiner.toString();
     }
 
     /**
@@ -118,14 +133,9 @@ public class Competition {
         return this.current.showStats();
     }
 
-    /**
-     * Next monster in the list is at turn in a competition.
-     * @return always returns true
-     */
-    public boolean nextMonstersTurn() {
-        int index = (this.aliveMonsters.indexOf(this.current) + 1) % this.aliveMonsters.size();
-        this.current = this.aliveMonsters.get(index);
-        return true;
+    private void nextMonstersTurn() {
+        int index = (this.allMonsters.indexOf(this.current) + 1) % this.allMonsters.size();
+        this.current = this.allMonsters.get(index);
     }
 
     /**
@@ -156,36 +166,44 @@ public class Competition {
         this.actionsQueue.add(new MonsterActionMonster(this.current, action, target));
 
         nextMonstersTurn();
-        if (this.aliveMonsters.get(FIRST_MONSTER_TURN_INDEX) == this.current) {
+        if (this.allMonsters.get(FIRST_MONSTER_TURN_INDEX) == this.current) {
             nextPhase();
             executePhaseII();
             nextPhase();
-            evaluatePhase0();
-            nextPhase();
+
         }
     }
 
-    private void evaluatePhase0() {
-        int numberOfAliveMonsters = 0;
-        for (Monster monster : this.aliveMonsters) {
-            if (!monster.isFainted()) {
-                numberOfAliveMonsters++;
-            }
+    /**
+     * Evaluates if someone has won the competition.
+     * @return Result success with winner, or {@code null} and competition continues.
+     */
+    public Result evaluatePhase0() {
+        if (this.phase != CompetitionPhases.PHASE_0) {
+            return null;
         }
-        if (numberOfAliveMonsters < 2) {
-            this.game.endCompetition();
+        this.aliveMonsters.removeIf(Monster::isFainted);
+        if (this.aliveMonsters.size() > NUM_OF_MONSTERS_WIN) {
+            nextPhase();
+            return null;
         }
+        return this.aliveMonsters.size() == NUM_OF_MONSTERS_WIN
+                ? Result.success(MESSAGE_MONSTER_WON_COMPETITION.formatted(this.aliveMonsters.get(FIRST_MONSTER_TURN_INDEX).getName()))
+                : Result.success(MESSAGE_TIED_COMPETITION);
     }
 
     private void executePhaseII() {
         this.actionsQueue.sort(Comparator.comparingInt(MonsterActionMonster::getEffectiveSpeedValue));
 
         for (MonsterActionMonster entry : this.actionsQueue) {
+            if (entry.getAction() == null) {
+                continue;
+            }
             Queue<Effect> queue = new ArrayDeque<>();
             List<Effect> actionEffects = entry.getAction().getEffects();
             for (Effect effect : actionEffects) {
                 if (effect.isRepeat()) {
-                    queue.addAll(effect.getEffects());
+                    queue.addAll(effect.getEffects(this.random));
                 } else {
                     queue.add(effect);
                 }
@@ -220,6 +238,14 @@ public class Competition {
                     currentEffect.executeEffect(this.random);
                 }
             }
+        }
+
+        refreshProtection();
+    }
+
+    private void refreshProtection() {
+        for (Monster monster : this.allMonsters) {
+            monster.removeProtection();
         }
     }
 

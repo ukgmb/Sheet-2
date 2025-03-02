@@ -15,7 +15,7 @@ action PondLeap WATER
 end action
 
 action BlazingShell FIRE
-    damage target base 40 100
+    damage target base 150 100
 end action
 
 action LavaDrip FIRE

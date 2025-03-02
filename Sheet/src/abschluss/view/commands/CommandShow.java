@@ -10,8 +10,6 @@ import abschluss.view.Result;
  */
 public class CommandShow implements Command<Competition> {
 
-    private static final String ERROR_MESSAGE_COMPETITION_NOT_STARTED = "competition hasn't started yet.";
-
     private final ShowParameter parameter;
 
     /**

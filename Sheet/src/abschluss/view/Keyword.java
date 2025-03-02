@@ -7,6 +7,7 @@ package abschluss.view;
  * @param <S> the type of arguments
  *     
  * @author ukgmb
+ * @author Programmieren-Team
  */
 public interface Keyword<T, S> extends Provider<T, S> {
 

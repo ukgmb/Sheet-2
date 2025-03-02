@@ -110,7 +110,7 @@ public class Game {
     /**
      * Ends the current competition by setting its reference value to {@code null}.
      */
-    protected void endCompetition() {
+    public void endCompetition() {
         this.competition = null;
     }
 }

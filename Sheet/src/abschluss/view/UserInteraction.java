@@ -25,6 +25,7 @@ import java.util.Set;
  * Class which handles the user's input and application's output.
  *
  * @author ukgmb
+ * @author Programmieren-Team
  */
 public class UserInteraction {
 
@@ -94,7 +95,6 @@ public class UserInteraction {
             printList(allLines);
             this.defaultStream.println();
             this.defaultStream.println(configurator.getDeclarationCount());
-            this.defaultStream.println();
             this.game = new Game(this, this.random);
             configurator.loadConfiguration(this.game);
             return true;
@@ -110,6 +110,7 @@ public class UserInteraction {
         while (this.isRunning) {
             String instructions = this.game.getMessage();
             if (instructions != null) {
+                this.defaultStream.println();
                 this.defaultStream.println(instructions);
             }
             if (this.scanner.hasNextLine()) {
@@ -189,7 +190,7 @@ public class UserInteraction {
         if (result.getMessage() != null) {
             outputStream.println((result.getType() == ResultType.FAILURE ? ERROR_PREFIX + (result.getMessage())
                     : result.getMessage()));
-            outputStream.println();
+
         }
 
     }

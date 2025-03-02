@@ -39,4 +39,14 @@ public class RandomGenerator {
     public double getRandomDouble(double min, double max) {
         return this.randomGen.nextDouble(min, max);
     }
+
+    /**
+     * Generates a random integer value.
+     * @param min Minimum number
+     * @param max Maximum number
+     * @return Random generated integer
+     */
+    public int getRandomInteger(int min, int max) {
+        return this.randomGen.nextInt(min, max + 1);
+    }
 }

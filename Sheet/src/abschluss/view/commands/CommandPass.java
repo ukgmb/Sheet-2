@@ -11,8 +11,6 @@ import abschluss.view.Result;
  */
 public class CommandPass implements Command<Competition> {
 
-    private static final String ERROR_MESSAGE_COMPETITION_NOT_STARTED = "competition hasn't started yet.";
-
     /**
      * Executes the pass command.
      * @param handle the game to be handled
@@ -20,6 +18,7 @@ public class CommandPass implements Command<Competition> {
      */
     @Override
     public Result execute(Competition handle) {
-        return handle.nextMonstersTurn() ? Result.success() : Result.error(ERROR_MESSAGE_COMPETITION_NOT_STARTED);
+        handle.action(null, null);
+        return Result.success();
     }
 }

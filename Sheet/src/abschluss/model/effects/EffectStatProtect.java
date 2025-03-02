@@ -35,7 +35,11 @@ public class EffectStatProtect extends Effect {
 
     @Override
     public boolean executeEffect(RandomGenerator random) {
-        return true;
+        if (Effect.hit(this.arguments.getUserMonster(), this.arguments.getTargetMonster(TargetMonster.USER), this.hitRate, random)) {
+            this.arguments.getUserMonster().addProtection(this.protect, this.count.getCount(random));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -49,7 +53,7 @@ public class EffectStatProtect extends Effect {
     }
 
     @Override
-    public List<Effect> getEffects() {
+    public List<Effect> getEffects(RandomGenerator random) {
         return null;
     }
 }

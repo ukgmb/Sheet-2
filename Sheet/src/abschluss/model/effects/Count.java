@@ -1,6 +1,6 @@
 package abschluss.model.effects;
 
-import java.util.Random;
+import abschluss.model.RandomGenerator;
 
 /**
  * This class stores how something is counted. Either count by absolute number or random.
@@ -38,12 +38,12 @@ public class Count {
 
     /**
      * Returns the count number depending on the initialization.
+     * @param random The random generator to generate random numbers
      * @return The count
      */
-    public int getCount() {
+    public int getCount(RandomGenerator random) {
         if (this.count == NOT_INITIALIZED_VALUE) {
-            Random random = new Random();
-            return random.nextInt(this.min, this.max + 1);
+            return random.getRandomInteger(this.min, this.max + 1);
         }
         return this.count;
     }

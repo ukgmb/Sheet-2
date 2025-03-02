@@ -6,6 +6,7 @@ package abschluss.view;
  * @param <S> The arguments to give
  *
  * @author ukgmb
+ * @author Programmieren-Team
  */
 public interface Provider<T, S> {
 

@@ -69,9 +69,10 @@ public abstract class Effect {
 
     /**
      * If the effect stores a list of effects, it will be returned.
+     * @param random The random generator if needed
      * @return List of effects, if found. Else, return {@code null}
      */
-    public abstract List<Effect> getEffects();
+    public abstract List<Effect> getEffects(RandomGenerator random);
 
     /**
      * Determines whether the effect will hit or not.

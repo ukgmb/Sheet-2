@@ -57,7 +57,7 @@ public class EffectStatusCondition extends Effect {
     }
 
     @Override
-    public List<Effect> getEffects() {
+    public List<Effect> getEffects(RandomGenerator random) {
         return null;
     }
 }
