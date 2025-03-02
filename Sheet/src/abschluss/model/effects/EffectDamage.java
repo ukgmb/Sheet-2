@@ -53,7 +53,7 @@ public class EffectDamage extends Effect {
     public boolean executeEffect(RandomGenerator random) {
         Monster target = this.arguments.getTargetMonster(this.target);
 
-        if (hit(target, random)) {
+        if (Effect.hit(this.arguments.getUserMonster(), target, this.hitRate, random)) {
             switch (this.strength.getStrengthType()) {
 
                 case ABS: target.damage(this.strength.getValue(), this.arguments.getUserMonster() != target);
@@ -68,20 +68,18 @@ public class EffectDamage extends Effect {
         return false;
     }
 
-    private boolean hit(Monster target, RandomGenerator random) {
-        if (target == this.arguments.getUserMonster()) {
-            return random.outcomeOf(this.hitRate * this.arguments.getUserMonster().getEffectiveStat(Stat.PRC));
-        }
-        return random.outcomeOf(this.hitRate * (this.arguments.getUserMonster().getEffectiveStat(Stat.PRC)
-                / target.getEffectiveStat(Stat.AGL)));
-    }
-
     private int relativeDamage(Monster target) {
         double percentage = (double) this.strength.getValue() / PER_CENT_FACTOR;
         return (int) Math.ceil(percentage * target.getMaxHitPoints());
     }
 
-    private int baseDamage(Monster target, RandomGenerator random) {
+    /**
+     * Calculates the damage with base damage.
+     * @param target Target monster
+     * @param random Random numbers generator
+     * @return Effective damage
+     */
+    protected int baseDamage(Monster target, RandomGenerator random) {
 
         double elementFactor = elementFactor(target);
         double statusFactor = (this.arguments.getUserMonster().getEffectiveStat(Stat.ATK) / target.getEffectiveStat(Stat.DEF));

@@ -62,7 +62,7 @@ public class Game {
      * @param monsters List of monsters to participate in the new competition.
      */
     public void startNewCompetition(List<Monster> monsters) {
-        this.competition = new Competition(monsters, this.handler, this.randomGenerator);
+        this.competition = new Competition(monsters, this.handler, this.randomGenerator, this);
     }
 
     /**
@@ -105,5 +105,12 @@ public class Game {
      */
     public Competition getCompetition() {
         return this.competition;
+    }
+
+    /**
+     * Ends the current competition by setting its reference value to {@code null}.
+     */
+    protected void endCompetition() {
+        this.competition = null;
     }
 }

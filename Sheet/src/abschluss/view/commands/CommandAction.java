@@ -32,6 +32,7 @@ public class CommandAction implements Command<Competition> {
      */
     @Override
     public Result execute(Competition handle) {
-        return Result.success("Yeah");
+        handle.action(this.action, this.target);
+        return Result.success();
     }
 }

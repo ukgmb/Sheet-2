@@ -22,7 +22,8 @@ public class RandomGenerator {
     }
 
     /**
-     * Generates random number to determine output of {@code true} or {@false}.
+     * Generates random number to determine output of {@code true} or {@code false}.
+     * @param percentage Percentage of success
      * @return {@code true}, if hit. Else, returns {@code false}
      */
     public boolean outcomeOf(double percentage) {

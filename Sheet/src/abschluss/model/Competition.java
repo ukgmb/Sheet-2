@@ -31,7 +31,7 @@ public class Competition {
     private static final int BURN_DAMAGE = 10;
     private static final int BURN_HIT_RATE = 100;
 
-    private final List<Monster> allMonsters;
+    private final List<Monster> aliveMonsters;
     private Map<Monster, Integer> countOfMonsters;
     private Map<Monster, Integer> maxNumOfMonster;
     private List<MonsterActionMonster> actionsQueue;
@@ -40,30 +40,33 @@ public class Competition {
     private CompetitionPhases phase;
     private final UserInteraction handler;
     private final RandomGenerator random;
+    private final Game game;
 
     /**
      * Constructs a new competition with given monsters.
      * @param allMonsters List of monsters to participate in the competition
      * @param handler The user interaction that handle the competition
      * @param random The random generator
+     * @param game The game in which the competition currently runs
      */
-    protected Competition(List<Monster> allMonsters, UserInteraction handler, RandomGenerator random) {
+    protected Competition(List<Monster> allMonsters, UserInteraction handler, RandomGenerator random, Game game) {
         countMonsters(allMonsters);
-        this.allMonsters = new ArrayList<>();
+        this.aliveMonsters = new ArrayList<>();
         for (Monster monster : allMonsters) {
             if (this.countOfMonsters.containsKey(monster)) {
                 Monster duplicateMonster = new Monster(monster);
                 duplicateMonster.addNameSuffix(PREFIX_SAME_MONSTER + getMonsterNumber(monster));
-                this.allMonsters.add(duplicateMonster);
+                this.aliveMonsters.add(duplicateMonster);
             } else {
-                this.allMonsters.add(new Monster(monster));
+                this.aliveMonsters.add(new Monster(monster));
             }
         }
-        this.current = this.allMonsters.get(FIRST_MONSTER_TURN_INDEX);
+        this.current = this.aliveMonsters.get(FIRST_MONSTER_TURN_INDEX);
         this.handler = handler;
         this.phase = CompetitionPhases.PHASE_1;
         this.actionsQueue = new ArrayList<>();
         this.random = random;
+        this.game = game;
     }
 
     private void countMonsters(List<Monster> monstersAlive) {
@@ -90,8 +93,8 @@ public class Competition {
     public String show() {
         StringBuilder builder = new StringBuilder();
 
-        for (Monster monster : this.allMonsters) {
-            String status = monster.getStatus().formatted(this.allMonsters.indexOf(monster) + 1,
+        for (Monster monster : this.aliveMonsters) {
+            String status = monster.getStatus().formatted(this.aliveMonsters.indexOf(monster) + 1,
                     monster == this.current ? MARKING_CURRENT_MONSTER : MARKING_NOT_CURRENT_MONSTER);
             builder.append(status).append(System.lineSeparator());
         }
@@ -120,8 +123,8 @@ public class Competition {
      * @return always returns true
      */
     public boolean nextMonstersTurn() {
-        int index = (this.allMonsters.indexOf(this.current) + 1) % this.allMonsters.size();
-        this.current = this.allMonsters.get(index);
+        int index = (this.aliveMonsters.indexOf(this.current) + 1) % this.aliveMonsters.size();
+        this.current = this.aliveMonsters.get(index);
         return true;
     }
 
@@ -149,20 +152,29 @@ public class Competition {
      * @param action The action the current monster plays
      * @param target The targeted monster of the action
      */
-    protected void action(Action action, Monster target) {
+    public void action(Action action, Monster target) {
         this.actionsQueue.add(new MonsterActionMonster(this.current, action, target));
 
         nextMonstersTurn();
-        if (this.allMonsters.get(0) == this.current) {
+        if (this.aliveMonsters.get(FIRST_MONSTER_TURN_INDEX) == this.current) {
             nextPhase();
             executePhaseII();
             nextPhase();
             evaluatePhase0();
+            nextPhase();
         }
     }
 
     private void evaluatePhase0() {
-
+        int numberOfAliveMonsters = 0;
+        for (Monster monster : this.aliveMonsters) {
+            if (!monster.isFainted()) {
+                numberOfAliveMonsters++;
+            }
+        }
+        if (numberOfAliveMonsters < 2) {
+            this.game.endCompetition();
+        }
     }
 
     private void executePhaseII() {
@@ -225,10 +237,10 @@ public class Competition {
      * @return Target monster if possible. Else, returns {@code null}
      */
     public Monster searchMonster() {
-        if (this.allMonsters.size() > 2) {
+        if (this.aliveMonsters.size() > 2) {
             return null;
         }
-        for (Monster monster : this.allMonsters) {
+        for (Monster monster : this.aliveMonsters) {
             if (monster != this.current) {
                 return monster;
             }
@@ -250,7 +262,7 @@ public class Competition {
      * @return Corresponding monster, if found. Else, returns {@code null}
      */
     public Monster getMonster(String name) {
-        for (Monster monster : this.allMonsters) {
+        for (Monster monster : this.aliveMonsters) {
             if (monster.getName().equals(name)) {
                 return monster;
             }

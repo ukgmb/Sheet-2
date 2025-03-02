@@ -1,5 +1,6 @@
 package abschluss.model.effects;
 
+import abschluss.model.Monster;
 import abschluss.model.MonsterActionMonster;
 import abschluss.model.RandomGenerator;
 
@@ -71,4 +72,20 @@ public abstract class Effect {
      * @return List of effects, if found. Else, return {@code null}
      */
     public abstract List<Effect> getEffects();
+
+    /**
+     * Determines whether the effect will hit or not.
+     * @param user User monster playing the effect
+     * @param target Targeted monster getting hit by effect
+     * @param hitRate Hit rate of the effect
+     * @param random The random generator
+     * @return {@code true}, if hit. Else, returns {@code false}
+     */
+    protected static boolean hit(Monster user, Monster target, int hitRate, RandomGenerator random) {
+        if (target == user) {
+            return random.outcomeOf(hitRate * user.getEffectiveStat(Stat.PRC));
+        }
+        return random.outcomeOf(hitRate * (user.getEffectiveStat(Stat.PRC)
+                / target.getEffectiveStat(Stat.AGL)));
+    }
 }

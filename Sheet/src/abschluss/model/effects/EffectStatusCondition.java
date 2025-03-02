@@ -1,5 +1,6 @@
 package abschluss.model.effects;
 
+import abschluss.model.Monster;
 import abschluss.model.RandomGenerator;
 import abschluss.model.StatusCondition;
 
@@ -36,7 +37,13 @@ public class EffectStatusCondition extends Effect {
 
     @Override
     public boolean executeEffect(RandomGenerator random) {
-        return true;
+        Monster target = this.arguments.getTargetMonster(this.target);
+
+        if (Effect.hit(this.arguments.getUserMonster(), target, this.hitRate, random)) {
+            target.inflictStatusCondition(this.condition);
+            return true;
+        }
+        return false;
     }
 
     @Override

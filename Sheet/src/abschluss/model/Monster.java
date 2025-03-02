@@ -1,7 +1,6 @@
 package abschluss.model;
 
 import abschluss.model.effects.Stat;
-
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -11,10 +10,6 @@ import java.util.StringJoiner;
  * @author ukgmb
  */
 public class Monster {
-
-    private static final int DEFAULT_PRECISION_RATE = 1;
-    private static final int DEFAULT_AGILITY_RATE = 1;
-
     private static final String NAME_STATS_SEPARATOR = ": ";
     private static final String STATS_SEPARATOR = ", ";
     private static final String EMPTY_SUFFIX = "";
@@ -23,7 +18,6 @@ public class Monster {
     private static final String FAINTED_CONDITION = "FAINTED";
     private static final int HP_NEEDED_FOR_FAINTED = 0;
     private static final String CURRENT_CONDITION_FORMAT = "(%s)";
-
     private static final String HEALTH_BAR_DELIMITER = "";
     private static final String HEALTH_BAR_PREFIX = "[";
     private static final String HEALTH_BAR_SUFFIX = "]";
@@ -32,9 +26,7 @@ public class Monster {
     private static final String HEALTH_LOSS_REPRESENTATION = "_";
     private static final String ARGUMENT_SEPARATOR = " ";
     private static final String PLACEHOLDER_STATUS = "%s"; //Placeholder to get filled later by competition class.
-
     private static final String SHOW_ACTIONS_MONSTER_NAME = "ACTIONS OF %s";
-
     private static final String SHOW_STATS_MONSTER_NAME = "STATS OF %s";
     private static final String STAT_CHANGE = "(%s)";
     private static final String SHOW_STATS_HEALTH_SEPARATOR = "/";
@@ -44,18 +36,17 @@ public class Monster {
     private static final int POSITIVE_CHANGE_CONDITION = 0;
     private static final int NO_CHANGE_FACTOR = 1; //Doesn't change anything if you multiply by one
     private static final double DECREASE_25_FACTOR = 3.0 / 4.0;
+    private static final int DEFAULT_PRECISION_RATE = 1;
+    private static final int DEFAULT_AGILITY_RATE = 1;
 
     private String name;
-
     private final int maxHitPoints;
-
     private int hitPoints;
     private final int attackRate;
     private final int defenceRate;
     private final int speedRate;
     private final int precisionRate;
     private final int agilityRate;
-
     private int attackChange;
     private int defenceChange;
     private int speedChange;
@@ -68,7 +59,6 @@ public class Monster {
 
     /**
      * Constructs a new monster. Declaration of HitPoints, AttackRate, DefenceRate and SpeedRate are required.
-     *
      * @param name        Name of the monster
      * @param element     Element of the monster
      * @param hitPoints   Hit points
@@ -92,7 +82,6 @@ public class Monster {
         this.speedChange = DEFAULT_STAT_CHANGE;
         this.precisionChange = DEFAULT_STAT_CHANGE;
         this.agilityChange = DEFAULT_AGILITY_RATE;
-
         this.element = element;
         this.actions = actions;
         this.condition = StatusCondition.OK;
@@ -100,7 +89,6 @@ public class Monster {
 
     /**
      * A copy constructor to copy a monster.
-     *
      * @param monster The monster to be copied
      */
     public Monster(Monster monster) {
@@ -117,7 +105,6 @@ public class Monster {
         this.speedChange = monster.speedChange;
         this.precisionChange = monster.precisionChange;
         this.agilityChange = monster.agilityChange;
-
         this.element = monster.element;
         this.actions = monster.actions;
         this.condition = monster.condition;
@@ -125,7 +112,6 @@ public class Monster {
 
     /**
      * Returns the name of the monster.
-     *
      * @return The name of the monster.
      */
     public String getName() {
@@ -134,24 +120,20 @@ public class Monster {
 
     /**
      * Returns the monster stats(Element, HP, ATK, DEF, SPD).
-     *
      * @return Stats of the monster
      */
     public String getStats() {
         StringJoiner joiner = new StringJoiner(STATS_SEPARATOR, this.name + NAME_STATS_SEPARATOR, EMPTY_SUFFIX);
-
         joiner.add(Element.class.getSimpleName() + STAT_VALUE_SEPARATOR + this.element.name());
         joiner.add(SHORT_HIT_POINTS + STAT_VALUE_SEPARATOR + this.hitPoints);
         joiner.add(Stat.ATK.name() + STAT_VALUE_SEPARATOR + this.attackRate);
         joiner.add(Stat.DEF.name() + STAT_VALUE_SEPARATOR + this.defenceRate);
         joiner.add(Stat.SPD.name() + STAT_VALUE_SEPARATOR + this.speedRate);
-
         return joiner.toString();
     }
 
     /**
      * Adds a String value to the monsters name.
-     *
      * @param suffix Suffix to be added to name
      */
     public void addNameSuffix(String suffix) {
@@ -160,19 +142,15 @@ public class Monster {
 
     /**
      * Constructs a String that shows the monsters current status during competition.
-     *
      * @return The string showing the monsters current status during competition
      */
     public String getStatus() {
         StringJoiner joiner = new StringJoiner(ARGUMENT_SEPARATOR);
-
         joiner.add(healthBar());
         joiner.add(PLACEHOLDER_STATUS);
         joiner.add(PLACEHOLDER_STATUS + this.name);
         joiner.add(currentCondition());
-
         return joiner.toString();
-
     }
 
     private String healthBar() {
@@ -186,7 +164,6 @@ public class Monster {
         for (int i = 0; i < countNotX; i++) {
             joiner.add(HEALTH_LOSS_REPRESENTATION);
         }
-
         return joiner.toString();
     }
 
@@ -195,38 +172,36 @@ public class Monster {
             return CURRENT_CONDITION_FORMAT.formatted(FAINTED_CONDITION);
         }
         return CURRENT_CONDITION_FORMAT.formatted(this.condition.name());
-
     }
 
-    private boolean isFainted() {
+    /**
+     * Returns whether monster has fainted.
+     * @return {@code true}, if fainted. Else, returns {@code false}
+     */
+    protected boolean isFainted() {
         return this.hitPoints == HP_NEEDED_FOR_FAINTED;
     }
 
     /**
      * Constructs a string which shows the current monster's actions.
-     *
      * @return The string containing all the information
      */
     protected String showActions() {
         StringJoiner joiner = new StringJoiner(System.lineSeparator());
-
         joiner.add(SHOW_ACTIONS_MONSTER_NAME.formatted(this.name));
         for (Action action : this.actions) {
             joiner.add(action.getInfo());
         }
-
         return joiner.toString();
     }
 
     /**
      * Constructs a string showing the current stats of the monster.
-     *
      * @return The string containing the information
      */
     protected String showStats() {
         StringBuilder builder = new StringBuilder();
         builder.append(SHOW_STATS_MONSTER_NAME.formatted(this.name)).append(System.lineSeparator());
-
         StringJoiner joiner = new StringJoiner(STATS_SEPARATOR);
         joiner.add(SHORT_HIT_POINTS + STAT_VALUE_SEPARATOR + this.hitPoints + SHOW_STATS_HEALTH_SEPARATOR
                 + this.maxHitPoints);
@@ -240,7 +215,6 @@ public class Monster {
                 + (this.precisionChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.precisionChange) : ""));
         joiner.add(Stat.AGL.name() + STAT_VALUE_SEPARATOR + this.agilityRate
                 + (this.agilityChange != DEFAULT_STAT_CHANGE ? STAT_CHANGE.formatted(this.agilityChange) : ""));
-
         builder.append(joiner);
         return builder.toString();
     }
@@ -255,6 +229,18 @@ public class Monster {
             this.hitPoints = HP_NEEDED_FOR_FAINTED;
         } else {
             this.hitPoints -= damage;
+        }
+    }
+
+    /**
+     * Heals the monster.
+     * @param heal The heal value the monster receives
+     */
+    public void heal(int heal) {
+        if (this.hitPoints + heal > this.maxHitPoints) {
+            this.hitPoints = this.maxHitPoints;
+        } else {
+            this.hitPoints += heal;
         }
     }
 
@@ -291,14 +277,12 @@ public class Monster {
      */
     public double getEffectiveStat(Stat stat) {
         double statFactor = getStatFactor(stat);
-
         double conditionFactor;
         if (this.condition != StatusCondition.SLEEP && (stat == Stat.ATK || stat == Stat.DEF || stat == Stat.SPD)) {
             conditionFactor = DECREASE_25_FACTOR;
         } else {
             conditionFactor = NO_CHANGE_FACTOR;
         }
-
         return getStat(stat) * statFactor * conditionFactor;
     }
 
@@ -365,5 +349,34 @@ public class Monster {
      */
     protected StatusCondition getCondition() {
         return this.condition;
+    }
+
+    /**
+     * Inflicts a stat change.
+     * @param stat The affected stat
+     * @param change Rate of change
+     * @param protection Monster is protected
+     */
+    public void inflictStatChange(Stat stat, int change, boolean protection) {
+        if (protection) {
+            switch (stat) {
+                case ATK -> this.attackChange = change;
+                case DEF -> this.defenceChange = change;
+                case SPD -> this.speedChange = change;
+                case PRC -> this.precisionChange = change;
+                case AGL -> this.agilityChange = change;
+                default -> this.isFainted();
+            }
+        }
+    }
+
+    /**
+     * Inflicts a status condition, only if monster isn't already suffering from another status condition.
+     * @param statusCondition The status condition to be inflicted
+     */
+    public void inflictStatusCondition(StatusCondition statusCondition) {
+        if (this.condition == StatusCondition.OK) {
+            this.condition = statusCondition;
+        }
     }
 }
