@@ -19,7 +19,7 @@ public abstract class Effect {
 
     /**
      * Constructs a new effect.
-     * @param isRepeat Whether the effect is an repeat effect or not.
+     * @param isRepeat Whether the effect is a repeat effect or not.
      */
     protected Effect(boolean isRepeat) {
         this.arguments = null;

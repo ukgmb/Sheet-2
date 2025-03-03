@@ -1,10 +1,6 @@
 package abschluss.model;
 
-import abschluss.model.effects.Effect;
-import abschluss.model.effects.EffectDamage;
-import abschluss.model.effects.Strength;
-import abschluss.model.effects.StrengthType;
-import abschluss.model.effects.TargetMonster;
+import abschluss.model.effects.*;
 import abschluss.view.Result;
 import abschluss.view.UserInteraction;
 
@@ -34,6 +30,10 @@ public class Competition {
     private static final int BURN_HIT_RATE = 100;
     private static final String MESSAGE_MONSTER_WON_COMPETITION = "%s has no opponents left and wins the competition!";
     private static final String MESSAGE_TIED_COMPETITION = "All monsters have fainted. The competition ends without a winner!";
+    private static final String MESSAGE_PROTECTION_ENDED = "%s's protection fades away...";
+    private static final String MESSAGE_MONSTER_TURN = System.lineSeparator() + "It's %s's turn.";
+    private static final String MESSAGE_MONSTER_PASSES = "%s passes!";
+    private static final String MESSAGE_MONSTER_USES_ACTION = "%s uses %s!";
     private static final int NUM_OF_MONSTERS_WIN = 1;
 
     private final List<Monster> allMonsters;
@@ -47,6 +47,7 @@ public class Competition {
     private final UserInteraction handler;
     private final RandomGenerator random;
     private final Game game;
+    private StringJoiner message;
 
     /**
      * Constructs a new competition with given monsters.
@@ -74,6 +75,7 @@ public class Competition {
         this.actionsQueue = new ArrayList<>();
         this.random = random;
         this.game = game;
+        this.message = new StringJoiner(System.lineSeparator());
     }
 
     private void countMonsters(List<Monster> monstersAlive) {
@@ -196,9 +198,12 @@ public class Competition {
         this.actionsQueue.sort(Comparator.comparingInt(MonsterActionMonster::getEffectiveSpeedValue));
 
         for (MonsterActionMonster entry : this.actionsQueue) {
+            this.message.add(MESSAGE_MONSTER_TURN.formatted(entry.getUserMonster().getName()));
             if (entry.getAction() == null) {
+                this.message.add(MESSAGE_MONSTER_PASSES.formatted(entry.getUserMonster().getName()));
                 continue;
             }
+            this.message.add(MESSAGE_MONSTER_USES_ACTION.formatted(entry.getUserMonster().getName(), entry.getAction().getName()));
             Queue<Effect> queue = new ArrayDeque<>();
             List<Effect> actionEffects = entry.getAction().getEffects();
             for (Effect effect : actionEffects) {
@@ -214,39 +219,56 @@ public class Competition {
     }
 
     private void evaluateMonsterCondition(MonsterActionMonster arguments, Queue<Effect> queue) {
-        if (arguments.getUserMonster().suffers() && this.random.outcomeOf(PROBABILITY_END_STATUS_CONDITION)) {
+        if (arguments.getUserMonster().getCondition() != StatusCondition.OK && this.random.outcomeOf(PROBABILITY_END_STATUS_CONDITION)) {
+            String message = arguments.getUserMonster().getCondition().getMessageOver();
             arguments.getUserMonster().endSuffering();
+            this.message.add(arguments.getUserMonster().getName() + message);
+        } else if (arguments.getUserMonster().getCondition() != StatusCondition.OK) {
+            String message = arguments.getUserMonster().getCondition().getMessageStatus();
+            this.message.add(arguments.getUserMonster().getName() + message);
         }
         if (arguments.getUserMonster().getCondition() == StatusCondition.SLEEP) {
             queue.clear();
-        }
-        if (arguments.getUserMonster().getCondition() == StatusCondition.BURN) {
-            queue.add(new EffectDamage(TargetMonster.USER, new Strength(StrengthType.REL, BURN_DAMAGE), BURN_HIT_RATE));
+        } else if (arguments.getUserMonster().getCondition() == StatusCondition.BURN) {
+            queue.add(new EffectBurn(arguments.getUserMonster()));
         }
 
         executeEffects(arguments, queue);
     }
 
     private void executeEffects(MonsterActionMonster arguments, Queue<Effect> queue) {
+        StringJoiner message = new StringJoiner(System.lineSeparator());
         if (!queue.isEmpty()) {
             Effect firstEffect = queue.poll();
             firstEffect.giveArguments(arguments);
             if (firstEffect.executeEffect(this.random)) {
+                message.add(arguments.getTargetMonster().getMessage());
                 while (!queue.isEmpty()) {
                     Effect currentEffect = queue.poll();
                     currentEffect.giveArguments(arguments);
                     currentEffect.executeEffect(this.random);
+                    message.add(arguments.getTargetMonster().getMessage());
                 }
             }
         }
+        this.message.add(message.toString());
 
         refreshProtection();
     }
 
     private void refreshProtection() {
         for (Monster monster : this.allMonsters) {
-            monster.removeProtection();
+            if (monster.removeProtection()) {
+                this.message.add(MESSAGE_PROTECTION_ENDED.formatted(monster.getName()));
+            }
         }
+
+        printMessage();
+    }
+
+    private void printMessage() {
+        this.handler.printMessage(this.message.toString());
+        this.message = new StringJoiner(System.lineSeparator());
     }
 
     /**

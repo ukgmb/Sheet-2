@@ -51,7 +51,7 @@ public class EffectDamage extends Effect {
 
     @Override
     public boolean executeEffect(RandomGenerator random) {
-        Monster target = this.arguments.getTargetMonster(this.target);
+        Monster target = this.arguments.getTargetMonster();
 
         if (Effect.hit(this.arguments.getUserMonster(), target, this.hitRate, random)) {
             switch (this.strength.getStrengthType()) {

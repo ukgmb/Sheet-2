@@ -36,6 +36,15 @@ public class Monster {
     private static final int NO_CHANGE_FACTOR = 1; //Doesn't change anything if you multiply by one
     private static final double DECREASE_25_FACTOR = 3.0 / 4.0;
 
+    private static final String TAKES_DAMAGE_EFFECT_MSG = "%s takes %s damage!";
+    private static final String TAKES_BURN_DAMAGE_MSG = "%s takes %s damage from burning!";
+    private static final String TAKES_NO_DAMAGE_MSG = "%s is protected and takes no damage!";
+    private static final String GAINS_HEALTH_MSG = "%s gains back %s health!";
+    private static final String STAT_RISES_MSG = "%s's %s rises!";
+    private static final String STAT_FALLS_MEG = "%s's %s decreases...";
+    private static final String TAKES_NO_STAT_CHANGE = "%s is protected and is unaffected!";
+    private static final String DIES_MSG = "%s faints!";
+
     private String name;
     private final int maxHitPoints;
     private int hitPoints;
@@ -46,6 +55,8 @@ public class Monster {
     private StatusCondition condition;
     private ProtectType protect;
     private int protectLeft;
+
+    private StringJoiner message;
 
     /**
      * Constructs a new monster. Declaration of HitPoints, AttackRate, DefenceRate and SpeedRate are required.
@@ -67,6 +78,7 @@ public class Monster {
         this.actions = actions;
         this.condition = StatusCondition.OK;
         this.protect = null;
+        this.message = new StringJoiner(System.lineSeparator());
     }
 
     /**
@@ -82,6 +94,8 @@ public class Monster {
         this.actions = monster.actions;
         this.condition = monster.condition;
         this.protect = monster.protect;
+        this.protectLeft = monster.protectLeft;
+        this.message = monster.message;
     }
 
     /**
@@ -121,7 +135,8 @@ public class Monster {
         joiner.add(healthBar());
         joiner.add(PLACEHOLDER_STATUS);
         joiner.add(PLACEHOLDER_STATUS + this.name);
-        joiner.add(currentCondition());
+        joiner.add(isFainted() ? CURRENT_CONDITION_FORMAT.formatted(FAINTED_CONDITION)
+                : CURRENT_CONDITION_FORMAT.formatted(this.condition.name()));
         return joiner.toString();
     }
 
@@ -137,13 +152,6 @@ public class Monster {
             joiner.add(HEALTH_LOSS_REPRESENTATION);
         }
         return joiner.toString();
-    }
-
-    private String currentCondition() {
-        if (isFainted()) {
-            return CURRENT_CONDITION_FORMAT.formatted(FAINTED_CONDITION);
-        }
-        return CURRENT_CONDITION_FORMAT.formatted(this.condition.name());
     }
 
     /**
@@ -185,14 +193,22 @@ public class Monster {
     /**
      * Damages the monster.
      * @param damage The damage the monster receives
-     * @param protectable able Whether this damage can be protected or not
+     * @param protectable Whether this damage can be protected or not
      */
     public void damage(int damage, boolean protectable) {
-        if (damage > this.hitPoints) {
-            this.hitPoints = HP_NEEDED_FOR_FAINTED;
-        } else {
-            this.hitPoints -= damage;
+        if (!(this.protect == ProtectType.HEALTH && protectable)) {
+            if (damage > this.hitPoints) {
+                this.hitPoints = HP_NEEDED_FOR_FAINTED;
+            } else {
+                this.hitPoints -= damage;
+            }
+            this.message.add(TAKES_DAMAGE_EFFECT_MSG.formatted(this.name, damage));
+            if (this.hitPoints == HP_NEEDED_FOR_FAINTED) {
+                this.message.add(DIES_MSG.formatted(this.name));
+            }
+            return;
         }
+        this.message.add(TAKES_NO_DAMAGE_MSG.formatted(this.name));
     }
 
     /**
@@ -205,6 +221,7 @@ public class Monster {
         } else {
             this.hitPoints += heal;
         }
+        this.message.add(GAINS_HEALTH_MSG.formatted(this.name, heal));
     }
 
     /**
@@ -280,14 +297,6 @@ public class Monster {
     }
 
     /**
-     * Returns whether monster currently suffers a status condition, except OK.
-     * @return {@code true}, if suffers. Else, returns {@code false}
-     */
-    protected boolean suffers() {
-        return this.condition != StatusCondition.OK;
-    }
-
-    /**
      * Ends the suffering under a status condition.
      */
     protected void endSuffering() {
@@ -306,12 +315,18 @@ public class Monster {
      * Inflicts a stat change.
      * @param stat The affected stat
      * @param change Rate of change
-     * @param protection Monster is protected
+     * @param protectable Monster is protected
      */
-    public void inflictStatChange(Stat stat, int change, boolean protection) {
-        if (protection) {
+    public void inflictStatChange(Stat stat, int change, boolean protectable) {
+        if (!(this.protect == ProtectType.STATS && protectable)) {
             this.stats.setStat(stat, change);
+            if (change > 0) {
+                this.message.add(STAT_RISES_MSG.formatted(this.name, stat.name()));
+            } else {
+                this.message.add(STAT_FALLS_MEG.formatted(this.name, stat.name()));
+            }
         }
+        this.message.add(TAKES_NO_STAT_CHANGE.formatted(this.name));
     }
 
     /**
@@ -321,6 +336,7 @@ public class Monster {
     public void inflictStatusCondition(StatusCondition statusCondition) {
         if (this.condition == StatusCondition.OK) {
             this.condition = statusCondition;
+            this.message.add(this.name + statusCondition.getMessageHit());
         }
     }
 
@@ -332,17 +348,48 @@ public class Monster {
     public void addProtection(ProtectType protect, int rounds) {
         this.protect = protect;
         this.protectLeft = rounds + 1;
+        this.message.add(this.name + protect.getMessageHit());
     }
 
     /**
      * Removes protection left by one.
-     * @return {@code true}, if monster isn't protected anymore. Else, returns {@code false}
+     * @return {@code true}, if protection as ended now. Else, returns {@code false}
      */
     public boolean removeProtection() {
         if (this.protectLeft > 0) {
             this.protectLeft--;
-            return this.protectLeft == 0;
+            if (this.protectLeft == 0) {
+                this.protect = null;
+                return true;
+            }
         }
-        return true;
+        return false;
+
+    }
+
+    /**
+     * Returns the stored message and deletes it.
+     * @return The stored message as a string.
+     */
+    protected String getMessage() {
+        String message = this.message.toString();
+        this.message = new StringJoiner(System.lineSeparator());
+        return message;
+    }
+
+    /**
+     * Effect that burns this monster by removing some of his health.
+     * @param damage The damage received by burn
+     */
+    public void burnDamage(int damage) {
+        if (damage > this.hitPoints) {
+            this.hitPoints -= damage;
+        } else {
+            this.hitPoints = HP_NEEDED_FOR_FAINTED;
+        }
+        this.message.add(TAKES_BURN_DAMAGE_MSG.formatted(this.name, damage));
+        if (this.hitPoints == HP_NEEDED_FOR_FAINTED) {
+            this.message.add(DIES_MSG.formatted(this.name));
+        }
     }
 }

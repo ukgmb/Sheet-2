@@ -209,5 +209,12 @@ public class UserInteraction {
         this.scanner.close();
     }
 
+    /**
+     * Prints the given message.
+     * @param message The message to be printed.
+     */
+    public void printMessage(String message) {
+        this.defaultStream.println(message);
+    }
 
 }

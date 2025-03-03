@@ -35,7 +35,7 @@ public class EffectStatProtect extends Effect {
 
     @Override
     public boolean executeEffect(RandomGenerator random) {
-        if (Effect.hit(this.arguments.getUserMonster(), this.arguments.getTargetMonster(TargetMonster.USER), this.hitRate, random)) {
+        if (Effect.hit(this.arguments.getUserMonster(), this.arguments.getTargetMonster(), this.hitRate, random)) {
             this.arguments.getUserMonster().addProtection(this.protect, this.count.getCount(random));
             return true;
         }

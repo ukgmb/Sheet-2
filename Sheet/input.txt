@@ -1,3 +1,4 @@
 competition BullFrog FireSnail
-show actions
+action PondLeap
+action MagmaTrail
 quit

@@ -39,7 +39,7 @@ public class EffectStatChange extends Effect {
 
     @Override
     public boolean executeEffect(RandomGenerator random) {
-        Monster target = this.arguments.getTargetMonster(this.target);
+        Monster target = this.arguments.getTargetMonster();
 
         if (Effect.hit(this.arguments.getUserMonster(), target, this.hitRate, random)) {
             target.inflictStatChange(this.stat, this.change, target != this.arguments.getUserMonster());

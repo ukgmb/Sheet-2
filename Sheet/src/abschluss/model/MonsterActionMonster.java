@@ -36,14 +36,10 @@ public class MonsterActionMonster {
 
     /**
      * Returns the target monster depending on the declaration of the effect.
-     * @param target Type of target expected (see {@link TargetMonster}
      * @return Target monster
      */
-    public Monster getTargetMonster(TargetMonster target) {
-        if (target == TargetMonster.TARGET) {
-            return this.target;
-        }
-        return this.user;
+    public Monster getTargetMonster() {
+        return this.target;
     }
 
     /**

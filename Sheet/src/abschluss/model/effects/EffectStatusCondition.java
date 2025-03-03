@@ -37,7 +37,7 @@ public class EffectStatusCondition extends Effect {
 
     @Override
     public boolean executeEffect(RandomGenerator random) {
-        Monster target = this.arguments.getTargetMonster(this.target);
+        Monster target = this.arguments.getTargetMonster();
 
         if (Effect.hit(this.arguments.getUserMonster(), target, this.hitRate, random)) {
             target.inflictStatusCondition(this.condition);
